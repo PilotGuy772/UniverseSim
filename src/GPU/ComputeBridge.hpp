@@ -13,7 +13,36 @@
 #include <cstring>
 
 namespace GPU {
-    void TestComputeShader(const std::vector<uint32_t> &input, uint32_t** result);
+    inline bgfx::ShaderHandle computeVerletPositionShader;
+    inline bgfx::ShaderHandle computeVerletVelocityShader;
+    inline bgfx::ShaderHandle computeGravityShader;
+    inline bgfx::ProgramHandle computeVerletPositionProgram;
+    inline bgfx::ProgramHandle computeVerletVelocityProgram;
+    inline bgfx::ProgramHandle computeGravityProgram;
+
+    /**
+     * @brief Initialize the compute shaders and assign their handles.
+     * @return Zero on success, non-zero on failure.
+     */
+    int Initialize();
+
+    /**
+     * @brief Dispatches the compute shader to calculate new positions.
+     */
+    void DispatchVerletPosition(float deltaTime);
+    /**
+     * @brief Dispatches the compute shader to calculate new velocities.
+     */
+    void DispatchVerletVelocity(float deltaTime);
+    /**
+     * @brief Dispatches the compute shader to calculate new accelerations.
+     */
+    void DispatchGravity();
+
+    /**
+     * @brief Swaps old and new buffers. Should be run once each frame.
+     */
+    void SwapBuffers();
 }
 
 #endif //COMPUTEBRIDGE_HPP

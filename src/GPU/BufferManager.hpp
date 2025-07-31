@@ -15,9 +15,14 @@ namespace GPU {
     inline bgfx::DynamicVertexBufferHandle PositionsBuffer_New;
     inline bgfx::DynamicVertexBufferHandle VelocitiesBuffer_Old;
     inline bgfx::DynamicVertexBufferHandle VelocitiesBuffer_New;
-    inline bgfx::DynamicVertexBufferHandle AccelerationsBuffer;
+    inline bgfx::DynamicVertexBufferHandle AccelerationsBuffer_Old;
+    inline bgfx::DynamicVertexBufferHandle AccelerationsBuffer_New;
     inline bgfx::DynamicVertexBufferHandle BitmaskBuffer;
     inline uint32_t BufferSize = 0; // size of the GPU buffers
+
+    // single-value buffers for delta-t and numParticles
+    inline bgfx::UniformHandle u_deltaTime;
+    inline bgfx::UniformHandle u_numParticles;
 
     /**
      * @brief Initializes the GPU buffers for compute.

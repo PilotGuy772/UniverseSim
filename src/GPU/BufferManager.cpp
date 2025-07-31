@@ -15,7 +15,8 @@ void GPU::InitBuffers(uint32_t size) {
     PositionsBuffer_New = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
     VelocitiesBuffer_Old = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
     VelocitiesBuffer_New = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    AccelerationsBuffer = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_Old = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
     BitmaskBuffer = bgfx::createDynamicVertexBuffer(size, bgfx::VertexLayout(), BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
 }
 

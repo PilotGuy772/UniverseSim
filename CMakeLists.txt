@@ -46,9 +46,19 @@ set(SHADER_SOURCE_DIR ${CMAKE_SOURCE_DIR}/shaders)
 set(SHADER_OUTPUT_BASE_DIR ${CMAKE_BINARY_DIR}/include/generated/shaders)
 set(VARYING_DEF ${SHADER_SOURCE_DIR}/varying.def.sc)
 
-file(GLOB_RECURSE COMPUTE_SHADERS ${SHADER_SOURCE_DIR}/compute/*.sc)
-file(GLOB_RECURSE VERTEX_SHADERS  ${SHADER_SOURCE_DIR}/vertex/*.sc)
-file(GLOB_RECURSE FRAGMENT_SHADERS ${SHADER_SOURCE_DIR}/fragment/*.sc)
+set(COMPUTE_SHADERS
+    ${SHADER_SOURCE_DIR}/compute/gravity.sc
+    ${SHADER_SOURCE_DIR}/compute/verlet_position.sc
+    ${SHADER_SOURCE_DIR}/compute/verlet_velocity.sc
+)
+
+set(VERTEX_SHADERS
+    # none yet
+)
+
+set(FRAGMENT_SHADERS
+    # none yet
+)
 
 # Platforms to generate headers for
 
