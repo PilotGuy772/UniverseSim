@@ -10,10 +10,12 @@
 #include <metal/compute_gravity.bin.h>
 #include <metal/compute_verlet_position.bin.h>
 #include <metal/compute_verlet_velocity.bin.h>
+#include <metal/compute_entity_adder.bin.h>
 #elif defined(BX_PLATFORM_LINUX)
 #include <glsl/compute_gravity.bin.h>
 #include <glsl/compute_verlet_position.bin.h>
 #include <glsl/compute_verlet_velocity.bin.h>
+#include <metal/compute_entity_adder.bin.h>
 #endif
 
 int GPU::Initialize() {
@@ -45,6 +47,13 @@ int GPU::Initialize() {
         return -1;
     }
 
+    computeEntityAdderHandle = bgfx::createShader(bgfx::makeRef(compute_entity_adder, sizeof(compute_entity_adder)));
+    computeEntityAdderProgram = bgfx::createProgram(computeEntityAdderHandle);
+    if (!bgfx::isValid(computeEntityAdderHandle) || !bgfx::isValid(computeEntityAdderProgram)) {
+        std::cerr << "Failed to create compute shader for Entity Adder." << std::endl;
+        return -1;
+    }
+
     return 0;
 }
 
@@ -59,7 +68,8 @@ void GPU::DispatchGravity() {
     bgfx::setBuffer(0, GPU::BitmaskBuffer, bgfx::Access::Read);
     bgfx::setBuffer(1, GPU::PositionsBuffer_Old, bgfx::Access::Read);
     bgfx::setBuffer(2, GPU::AccelerationsBuffer_New, bgfx::Access::Write);
-    bgfx::setUniform(GPU::u_numParticles, &BufferSize, 1);
+    auto bufferSizeAsFloat4 = simd::packed::float4{static_cast<float>(BufferSize), 0.0f, 0.0f, 0.0f};
+    bgfx::setUniform(u_numParticles, &bufferSizeAsFloat4, 1);
 
     // dispatch
     bgfx::dispatch(Core::VIEW_ID_COMPUTE_GRAVITY,

@@ -21,7 +21,7 @@ namespace Core {
 
     // View IDs
     constexpr uint8_t VIEW_ID_MAIN = 0; // Main view for rendering
-    constexpr uint8_t VIEW_ID_SECONDARY = 1; // Secondary view, if necessary
+    constexpr uint8_t VIEW_ID_ENTITY_ADDER = 1; // Entity adder view
     constexpr uint8_t VIEW_ID_COMPUTE_POSITION = 2; // View for computing gravitation
     constexpr uint8_t VIEW_ID_COMPUTE_GRAVITY = 3; // View for integrating physics
     constexpr uint8_t VIEW_ID_COMPUTE_VELOCITY = 4; // View for computing velocities

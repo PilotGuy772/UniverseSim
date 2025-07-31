@@ -50,6 +50,7 @@ set(COMPUTE_SHADERS
     ${SHADER_SOURCE_DIR}/compute/gravity.sc
     ${SHADER_SOURCE_DIR}/compute/verlet_position.sc
     ${SHADER_SOURCE_DIR}/compute/verlet_velocity.sc
+    ${SHADER_SOURCE_DIR}/compute/entity_adder.sc
 )
 
 set(VERTEX_SHADERS

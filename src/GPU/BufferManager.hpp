@@ -23,6 +23,12 @@ namespace GPU {
     // single-value buffers for delta-t and numParticles
     inline bgfx::UniformHandle u_deltaTime;
     inline bgfx::UniformHandle u_numParticles;
+    inline bgfx::UniformHandle u_position;
+    inline bgfx::UniformHandle u_velocity;
+    inline bgfx::UniformHandle u_index;
+
+
+
 
     /**
      * @brief Initializes the GPU buffers for compute.
@@ -31,7 +37,8 @@ namespace GPU {
     void InitBuffers(uint32_t size);
 
     /**
-     * @brief Updates the given index with the contents of the entity.
+     * @brief Updates the given index with the contents of the entity. You must call `bgfx::frame()` after this WITHOUT
+     * first dispatching any other shaders to ensure data is written safely.
      * @param index The index position to fill with the new entity data.
      * @param position_mass The position and mass of the entity, in a vec4 format.
      * @param velocity The velocity of the entity, in a vec4 format. The w component is unused.

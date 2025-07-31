@@ -3,36 +3,35 @@
 //
 #include <catch2/catch_all.hpp>
 #include <GPU/ComputeBridge.hpp>
+
 #include "Core/Application.hpp"
+#include "GPU/BufferManager.hpp"
 
-void fillRandomData(std::vector<uint32_t>* data) {
-    for (auto& value : *data) {
-        value = rand() % 100; // Fill with random values between 0 and 99
-    }
-}
 
-TEST_CASE("Compute Shader Test", "[GPU]") {
-    // initialize BGFX first
+TEST_CASE("Compute shader dispatches without errors", "[GPU]") {
+    // this just tests the init and dispatch functions for blatant errors
     REQUIRE(Core::Init() == 0);
+    REQUIRE(GPU::Initialize() == 0); // Ensure initialization is successful
 
-    // Example input data for the compute shader
-    // vector of size 64 with random values
-    std::vector<uint32_t> input(64);
-    fillRandomData(&input);
-    uint32_t* result = nullptr;
+    // init buffers
+    REQUIRE_NOTHROW(GPU::InitBuffers(64)); // Initialize buffers with a size of 64
 
-    // Call the compute shader test function
-    GPU::TestComputeShader(input, &result);
-
-    // Check if the result is not null
-    REQUIRE(result != nullptr);
-
-    // Check if the result matches expected output
-    // the shader simply doubles each input value:
-    for (size_t i = 0; i < input.size(); ++i) {
-        REQUIRE(result[i] == input[i] * 2);
+    // create 16 random entities-- position + mass, velocity
+    // use add function to add them to the GPU buffers
+    std::vector<simd::packed::float4> positions(16);
+    std::vector<simd::packed::float4> velocities(16);
+    // fill with random float4
+    for (uint32_t i = 0; i < 16; ++i) {
+        positions[i] = simd::packed::float4{static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 10)};
+        velocities[i] = simd::packed::float4{static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), 0.0f};
+        REQUIRE_NOTHROW(GPU::AddEntity(i, positions[i], velocities[i])); // Add each entity to the GPU buffers
+        REQUIRE_NOTHROW(bgfx::frame());
     }
+    std::vector<uint32_t> flags(16, 1); // All entities are alive
 
-    // Clean up allocated memory
-    free(result);
+    REQUIRE_NOTHROW(GPU::DispatchVerletPosition(0.016f)); // Dispatch position compute shader
+    REQUIRE_NOTHROW(GPU::DispatchVerletVelocity(0.016f)); // Dispatch velocity compute shader
+    REQUIRE_NOTHROW(GPU::DispatchGravity()); // Dispatch gravity compute shader
+
+    REQUIRE_NOTHROW(bgfx::frame());
 }

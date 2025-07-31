@@ -16,9 +16,11 @@ namespace GPU {
     inline bgfx::ShaderHandle computeVerletPositionShader;
     inline bgfx::ShaderHandle computeVerletVelocityShader;
     inline bgfx::ShaderHandle computeGravityShader;
+    inline bgfx::ShaderHandle computeEntityAdderHandle;
     inline bgfx::ProgramHandle computeVerletPositionProgram;
     inline bgfx::ProgramHandle computeVerletVelocityProgram;
     inline bgfx::ProgramHandle computeGravityProgram;
+    inline bgfx::ProgramHandle computeEntityAdderProgram;
 
     /**
      * @brief Initialize the compute shaders and assign their handles.
