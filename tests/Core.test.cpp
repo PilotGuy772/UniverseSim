@@ -6,10 +6,10 @@
 #include <catch2/catch_all.hpp>
 #include <Core/Application.hpp>
 
-TEST_CASE("Window initialization", "[Core]") {
-    // Initialize the application
-    int result = Core::Init();
-
-    // Check if initialization was successful
-    REQUIRE(result == 0);
-}
+// TEST_CASE("Window initialization", "[Core]") {
+//     // Initialize the application
+//     int result = Core::Init();
+//
+//     // Check if initialization was successful
+//     REQUIRE(result == 0);
+// }

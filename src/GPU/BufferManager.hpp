@@ -27,7 +27,9 @@ namespace GPU {
     inline bgfx::UniformHandle u_velocity;
     inline bgfx::UniformHandle u_index;
 
-
+    // textures for readback
+    inline bgfx::TextureHandle WritableSingleEntityTexture;
+    inline bgfx::TextureHandle ReadbackSingleEntityTexture;
 
 
     /**
@@ -59,6 +61,29 @@ namespace GPU {
      * compute shader must be used to copy the data from the old buffers to the new ones. This should only be used in moderation.
      */
     void ResizeBuffers();
+
+    /**
+     * @brief Read back a single entity's data from the GPU buffers.
+     * @param index The GPU buffer index of the entity to read back.
+     * @return A texture handle pointing to a texture containing the entity's data.
+     *
+     * @note The returned texture will NOT be readable. You must:
+     * 1. Call this function.
+     * 2. Call `bgfx::frame()` to ensure the data is written. The frame must not dispatch any other compute shaders.
+     * 3. Call `GPU::GetReadableTexture()` to get a readable texture handle.
+     * 4. Call `bgfx::frame()` again to ensure the texture is ready for reading. Other compute shaders can be dispatched
+     * during this frame.
+     * 5. Copy the data from the texture to a CPU-accessible buffer using `bgfx::readTexture()`.
+     */
+    void ReadbackSingleEntity(uint32_t index);
+
+    /**
+     * @brief Get a readable texture handle from a writable texture handle. Uses bgfx::blit() internally.
+     * @param texture A texture that is writable by the GPU.
+     * @return A texture that is readable by the CPU, but not writable by the GPU. You must call `bgfx::frame()` after
+     * after this function and before attempting to read the texture data.
+     */
+    void GetReadableTexture();
 
 }
 

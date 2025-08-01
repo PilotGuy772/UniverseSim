@@ -38,6 +38,12 @@ void GPU::InitBuffers(uint32_t size) {
     u_index = bgfx::createUniform("u_index", bgfx::UniformType::Vec4);
     u_numParticles = bgfx::createUniform("u_numParticles", bgfx::UniformType::Vec4);
     u_deltaTime = bgfx::createUniform("u_deltaTime", bgfx::UniformType::Vec4);
+
+    // textures
+    WritableSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA8,
+                                                                 BGFX_TEXTURE_COMPUTE_WRITE);
+    ReadbackSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA8,
+                                                                BGFX_TEXTURE_READ_BACK | BGFX_TEXTURE_BLIT_DST);
 }
 
 void GPU::AddEntity(const uint32_t index, simd::packed::float4 position_mass, simd::packed::float4 velocity, uint32_t flags) {
@@ -46,14 +52,8 @@ void GPU::AddEntity(const uint32_t index, simd::packed::float4 position_mass, si
         return;
     }
 
-    // const bgfx::Memory* position_mem = bgfx::copy(&position_mass, sizeof(simd::packed::float4));
-    // const uint32_t float4_pos = index * sizeof(simd::packed::float4);
-    // bgfx::update(PositionsBuffer_Old, float4_pos, position_mem);
-    // const bgfx::Memory* velocity_mem = bgfx::copy(&velocity, sizeof(simd::packed::float4));
-    // bgfx::update(VelocitiesBuffer_Old, float4_pos, velocity_mem);
     const bgfx::Memory* bitmask_mem = bgfx::copy(&flags, sizeof(uint32_t));
-    const uint32_t bitmask_startpos = index * sizeof(uint32_t);
-    bgfx::update(BitmaskBuffer, bitmask_startpos, bitmask_mem);
+    bgfx::update(BitmaskBuffer, index, bitmask_mem);
 
     // use the add_entity shader to add the entity to the GPU buffers
     // arguments: 0. positions_old 1. velocities_old
@@ -86,5 +86,34 @@ void GPU::KillEntity(uint32_t index) {
 
 void GPU::ResizeBuffers() {
     // not implemented (yet) //
+}
+
+void GPU::GetReadableTexture() {
+    // blit writable texture to readback texture
+    bgfx::blit(Core::VIEW_ID_COMPUTE_READBACK_SINGLE, ReadbackSingleEntityTexture, 0, 0, WritableSingleEntityTexture, 0, 0, 3, 1);
+}
+
+void GPU::ReadbackSingleEntity(uint32_t index) {
+    // readback single arguments:
+    // 0. flags 1. positions_old 2. velocities_old 3. accelerations_old 4. texture
+    // uniforms:
+    // 0. float4 index
+    if (index >= BufferSize) {
+        std::cerr << "Error: Index out of bounds for GPU buffers." << std::endl;
+        return;
+    }
+
+    // set buffers
+    bgfx::setBuffer(0, BitmaskBuffer, bgfx::Access::Read);
+    bgfx::setBuffer(1, PositionsBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(2, VelocitiesBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(3, AccelerationsBuffer_Old, bgfx::Access::Read);
+    bgfx::setImage(4, WritableSingleEntityTexture, 0, bgfx::Access::Write);
+    auto indexAsFloat4 = simd::packed::float4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
+    bgfx::setUniform(u_index, &indexAsFloat4, 1);
+
+    // dispatch
+    bgfx::dispatch(Core::VIEW_ID_COMPUTE_READBACK_SINGLE, computeReadbackSingleProgram,
+                   1, 1, 1); // only one thread group needed
 }
 

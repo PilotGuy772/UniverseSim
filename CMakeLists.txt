@@ -51,6 +51,7 @@ set(COMPUTE_SHADERS
     ${SHADER_SOURCE_DIR}/compute/verlet_position.sc
     ${SHADER_SOURCE_DIR}/compute/verlet_velocity.sc
     ${SHADER_SOURCE_DIR}/compute/entity_adder.sc
+    ${SHADER_SOURCE_DIR}/compute/readback_single.sc
 )
 
 set(VERTEX_SHADERS
@@ -114,6 +115,10 @@ add_custom_target(compile_shaders ALL DEPENDS
 ## PROJECT CONFIGURATION ##
 ###########################
 
+# Add Metal framework and Objective-C++ support
+find_library(METAL_FRAMEWORK Metal)
+find_library(FOUNDATION_FRAMEWORK Foundation)
+
 add_library(UniverseSim_lib
         src/Core/Application.cpp
         src/Core/Application.hpp
@@ -127,7 +132,11 @@ add_library(UniverseSim_lib
         src/Simulation/EntityManager.hpp
         src/GPU/BufferManager.cpp
         src/GPU/BufferManager.hpp
+        src/Debug/MetalCapture.h
+        src/Debug/MetalCapture.mm
 )
+set_source_files_properties(MetalCapture.mm PROPERTIES
+        COMPILE_FLAGS "-x objective-c++")
 
 add_executable(UniverseSim src/main.cpp)
 add_dependencies(UniverseSim compile_shaders)
@@ -145,6 +154,7 @@ target_include_directories(UniverseSim_lib PUBLIC
 )
 
 target_link_libraries(UniverseSim_lib PUBLIC SDL3::SDL3 bgfx bimg bx)
+target_link_libraries(UniverseSim_lib PUBLIC ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
 target_link_libraries(UniverseSim PRIVATE UniverseSim_lib)
 
 ###########################

@@ -11,6 +11,7 @@
 #include <metal/compute_verlet_position.bin.h>
 #include <metal/compute_verlet_velocity.bin.h>
 #include <metal/compute_entity_adder.bin.h>
+#include <metal/compute_readback_single.bin.h>
 #elif defined(BX_PLATFORM_LINUX)
 #include <glsl/compute_gravity.bin.h>
 #include <glsl/compute_verlet_position.bin.h>
@@ -28,31 +29,35 @@ int GPU::Initialize() {
     bgfx::setViewName(Core::VIEW_ID_COMPUTE_VELOCITY, "computeVerletVelocity");
     bgfx::setViewClear(Core::VIEW_ID_COMPUTE_VELOCITY, BGFX_CLEAR_NONE);
 
-    computeVerletPositionShader = bgfx::createShader(bgfx::makeRef(compute_verlet_position, sizeof(compute_verlet_position)));
-    computeVerletPositionProgram = bgfx::createProgram(computeVerletPositionShader);
-    if (!bgfx::isValid(computeVerletPositionShader) || !bgfx::isValid(computeVerletPositionProgram)) {
-        std::cerr << "Failed to create compute shader for Verlet Position." << std::endl;
-        return -1;
-    }
-    computeVerletVelocityShader = bgfx::createShader(bgfx::makeRef(compute_verlet_velocity, sizeof(compute_verlet_velocity)));
-    computeVerletVelocityProgram = bgfx::createProgram(computeVerletVelocityShader);
-    if (!bgfx::isValid(computeVerletVelocityShader) || !bgfx::isValid(computeVerletVelocityProgram)) {
-        std::cerr << "Failed to create compute shader for Verlet Velocity." << std::endl;
-        return -1;
-    }
-    computeGravityShader = bgfx::createShader(bgfx::makeRef(compute_gravity, sizeof(compute_gravity)));
-    computeGravityProgram = bgfx::createProgram(computeGravityShader);
-    if (!bgfx::isValid(computeGravityShader) || !bgfx::isValid(computeGravityProgram)) {
-        std::cerr << "Failed to create compute shader for Gravity." << std::endl;
-        return -1;
-    }
+    auto createComputeProgram = [](const void* shaderData, size_t shaderSize, const char* errorMsg) {
+        auto shader = bgfx::createShader(bgfx::makeRef(shaderData, shaderSize));
+        auto program = bgfx::createProgram(shader);
+        if (!bgfx::isValid(shader) || !bgfx::isValid(program)) {
+            std::cerr << errorMsg << std::endl;
+            return std::make_pair(bgfx::ShaderHandle(), bgfx::ProgramHandle()); // invalid handles
+        }
+        return std::make_pair(shader, program);
+    };
 
-    computeEntityAdderHandle = bgfx::createShader(bgfx::makeRef(compute_entity_adder, sizeof(compute_entity_adder)));
-    computeEntityAdderProgram = bgfx::createProgram(computeEntityAdderHandle);
-    if (!bgfx::isValid(computeEntityAdderHandle) || !bgfx::isValid(computeEntityAdderProgram)) {
-        std::cerr << "Failed to create compute shader for Entity Adder." << std::endl;
-        return -1;
-    }
+    std::tie(computeVerletPositionShader, computeVerletPositionProgram) =
+        createComputeProgram(compute_verlet_position, sizeof(compute_verlet_position), "Failed to create compute shader for Verlet Position.");
+    if (!bgfx::isValid(computeVerletPositionShader) || !bgfx::isValid(computeVerletPositionProgram)) return -1;
+
+    std::tie(computeVerletVelocityShader, computeVerletVelocityProgram) =
+        createComputeProgram(compute_verlet_velocity, sizeof(compute_verlet_velocity), "Failed to create compute shader for Verlet Velocity.");
+    if (!bgfx::isValid(computeVerletVelocityShader) || !bgfx::isValid(computeVerletVelocityProgram)) return -1;
+
+    std::tie(computeGravityShader, computeGravityProgram) =
+        createComputeProgram(compute_gravity, sizeof(compute_gravity), "Failed to create compute shader for Gravity.");
+    if (!bgfx::isValid(computeGravityShader) || !bgfx::isValid(computeGravityProgram)) return -1;
+
+    std::tie(computeEntityAdderHandle, computeEntityAdderProgram) =
+        createComputeProgram(compute_entity_adder, sizeof(compute_entity_adder), "Failed to create compute shader for Entity Adder.");
+    if (!bgfx::isValid(computeEntityAdderHandle) || !bgfx::isValid(computeEntityAdderProgram)) return -1;
+
+    std::tie(computeReadbackSingleShader, computeReadbackSingleProgram) =
+        createComputeProgram(compute_readback_single, sizeof(compute_readback_single), "Failed to create compute shader for Readback Single.");
+    if (!bgfx::isValid(computeReadbackSingleShader) || !bgfx::isValid(computeReadbackSingleProgram)) return -1;
 
     return 0;
 }
