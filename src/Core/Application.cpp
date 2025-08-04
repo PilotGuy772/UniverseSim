@@ -10,6 +10,8 @@
 #include <bgfx/platform.h>
 
 int Core::Init() {
+    SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "x11");
+
     // Init SDL3
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
@@ -88,7 +90,7 @@ int Core::Init() {
 
     // init BGFX
     bgfx::Init init;
-#if defined(__linux)
+#if defined(__linux__)
     init.type = bgfx::RendererType::OpenGL;
 #elif defined(__APPLE__)
     init.type = bgfx::RendererType::Metal;

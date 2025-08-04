@@ -84,7 +84,7 @@ void GPU::KillEntity(uint32_t index) {
 
     const uint32_t zero = 0;
     const bgfx::Memory* mem = bgfx::copy(&zero, sizeof(uint32_t));
-    const uint32_t bitmask_startpos = index * sizeof(uint32_t);
+    const uint32_t bitmask_startpos = index ;
     bgfx::update(BitmaskBuffer, bitmask_startpos, mem);
 }
 
