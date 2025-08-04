@@ -7,7 +7,6 @@
 #include "GPU/BufferManager.hpp"
 #include "GPU/ComputeBridge.hpp"
 #include "Core/Application.hpp"
-#include "Debug/MetalCapture.h"
 #include <bgfx/bgfx.h>
 #include <glm/vec4.hpp>
 #include <random>
