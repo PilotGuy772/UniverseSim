@@ -7,6 +7,13 @@
 
 // Globals for application configuration
 namespace Core {
+    // Defines for shader type on Linux
+#if defined(__linux__)
+//#define SHADER_TYPE_GLSL 0
+//#define SHADER_TYPE_SPIRV 0
+#define SHADER_TYPE_430 0
+#endif
+
     // Application metadata
     const auto APPLICATION_NAME = "Universe Simulator";
     const auto APPLICATION_SLUG = "universe-sim";

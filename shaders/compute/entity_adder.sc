@@ -8,10 +8,11 @@ BUFFER_WO(positions_old, vec4, 0);
 BUFFER_WO(velocities_old, vec4, 1);
 
 // UNIFORMS //
-uniform float4 u_position;
-uniform float4 u_velocity;
-uniform float4 u_index;
+uniform vec4 u_position;
+uniform vec4 u_velocity;
+uniform vec4 u_index;
 
+NUM_THREADS(1, 1, 1)
 void main() {
     // set the position and velocity
     uint index_as_int = uint(u_index.x);

@@ -3,18 +3,18 @@
 
 // READONLY INPUTS //
 BUFFER_RO(flags, uint, 0);
-BUFFER_RO(velocities, float4, 1);
-BUFFER_RO(accelerations, float4, 2);
-BUFFER_RO(positions_old, float4, 3);
+BUFFER_RO(velocities, vec4, 1);
+BUFFER_RO(accelerations, vec4, 2);
+BUFFER_RO(positions_old, vec4, 3);
 
 
 // OUTPUTS //
-BUFFER_WO(positions_new, float4, 4);
+BUFFER_WO(positions_new, vec4, 4);
 
 // UNIFORMS //
 uniform float deltaTime;
 
-
+NUM_THREADS(64, 1, 1)
 void main() {
     // velocity-verlet for position:
     // x(t + dt) = x(t) + v(t) * dt + 0.5 * a(t) * dt^2

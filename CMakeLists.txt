@@ -8,10 +8,10 @@ project(UniverseSim)
 # Below, see variables you MUST SET APPROPRIATELY for your compiler and environment.
 
 # Platform you're compiling FOR. This must be one of "osx", "linux", or "windows". Windows is not supported officially, but *should* work.
-set(PLATFORM osx)
+set(PLATFORM linux)
 # Shader profile types to compile for. These must be selected for your system and graphics API. Use any selection of "glsl", "essl", "spirv", "metal".
 # Which shader type is used in actual execution is determined by the graphics API and platform.
-set(SHADER_PLATFORMS metal)
+set(SHADER_PLATFORMS 430)
 
 
 
@@ -115,10 +115,6 @@ add_custom_target(compile_shaders ALL DEPENDS
 ## PROJECT CONFIGURATION ##
 ###########################
 
-# Add Metal framework and Objective-C++ support
-find_library(METAL_FRAMEWORK Metal)
-find_library(FOUNDATION_FRAMEWORK Foundation)
-
 add_library(UniverseSim_lib
         src/Core/Application.cpp
         src/Core/Application.hpp
@@ -132,11 +128,7 @@ add_library(UniverseSim_lib
         src/Simulation/EntityManager.hpp
         src/GPU/BufferManager.cpp
         src/GPU/BufferManager.hpp
-        src/Debug/MetalCapture.h
-        src/Debug/MetalCapture.mm
 )
-set_source_files_properties(MetalCapture.mm PROPERTIES
-        COMPILE_FLAGS "-x objective-c++")
 
 add_executable(UniverseSim src/main.cpp)
 add_dependencies(UniverseSim compile_shaders)
@@ -154,7 +146,6 @@ target_include_directories(UniverseSim_lib PUBLIC
 )
 
 target_link_libraries(UniverseSim_lib PUBLIC SDL3::SDL3 bgfx bimg bx)
-target_link_libraries(UniverseSim_lib PUBLIC ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
 target_link_libraries(UniverseSim PRIVATE UniverseSim_lib)
 
 ###########################

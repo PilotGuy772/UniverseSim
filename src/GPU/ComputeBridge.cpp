@@ -4,19 +4,29 @@
 #include "ComputeBridge.hpp"
 #include "BufferManager.hpp"
 #include "../Core/ApplicationConfig.hpp"
+#include <bx/platform.h>
 
 // shaders
-#if defined(BX_PLATFORM_OSX)
+#if defined(__APPLE__)
 #include <metal/compute_gravity.bin.h>
 #include <metal/compute_verlet_position.bin.h>
 #include <metal/compute_verlet_velocity.bin.h>
 #include <metal/compute_entity_adder.bin.h>
 #include <metal/compute_readback_single.bin.h>
-#elif defined(BX_PLATFORM_LINUX)
-#include <glsl/compute_gravity.bin.h>
-#include <glsl/compute_verlet_position.bin.h>
-#include <glsl/compute_verlet_velocity.bin.h>
-#include <metal/compute_entity_adder.bin.h>
+#elif defined(__linux__)
+#if defined(SHADER_TYPE_SPIRV)
+#include <spirv/compute_gravity.bin.h>
+#include <spirv/compute_verlet_position.bin.h>
+#include <spirv/compute_verlet_velocity.bin.h>
+#include <spirv/compute_entity_adder.bin.h>
+#include <spirv/compute_readback_single.bin.h>
+#elif defined(SHADER_TYPE_430)
+#include <430/compute_gravity.bin.h>
+#include <430/compute_verlet_position.bin.h>
+#include <430/compute_verlet_velocity.bin.h>
+#include <430/compute_entity_adder.bin.h>
+#include <430/compute_readback_single.bin.h>
+#endif
 #endif
 
 int GPU::Initialize() {
@@ -73,7 +83,7 @@ void GPU::DispatchGravity() {
     bgfx::setBuffer(0, GPU::BitmaskBuffer, bgfx::Access::Read);
     bgfx::setBuffer(1, GPU::PositionsBuffer_Old, bgfx::Access::Read);
     bgfx::setBuffer(2, GPU::AccelerationsBuffer_New, bgfx::Access::Write);
-    auto bufferSizeAsFloat4 = simd::packed::float4{static_cast<float>(BufferSize), 0.0f, 0.0f, 0.0f};
+    auto bufferSizeAsFloat4 = glm::vec4{static_cast<float>(BufferSize), 0.0f, 0.0f, 0.0f};
     bgfx::setUniform(u_numParticles, &bufferSizeAsFloat4, 1);
 
     // dispatch

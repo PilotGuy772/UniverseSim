@@ -5,8 +5,7 @@
 #ifndef BUFFERMANAGER_HPP
 #define BUFFERMANAGER_HPP
 #include <bgfx/bgfx.h>
-#include <simd/packed.h>
-
+#include <glm/vec4.hpp>
 #include "../Simulation/EntityManager.hpp"
 
 // handles buffers for GPU compute
@@ -46,8 +45,8 @@ namespace GPU {
      * @param velocity The velocity of the entity, in a vec4 format. The w component is unused.
      * @param flags Optional flags bitmask; defaults to 1 (alive).
      */
-    void AddEntity(uint32_t index, simd::packed::float4 position_mass,
-                   simd::packed::float4 velocity, uint32_t flags = 1);
+    void AddEntity(uint32_t index, glm::vec4 position_mass,
+                   glm::vec4 velocity, uint32_t flags = 1);
 
     /**
      * @brief Zeros the target entity's bitmask, thereby marking it as dead and skipping it in all future computations.

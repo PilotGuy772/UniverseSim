@@ -18,12 +18,12 @@
 //
 //     // create 16 random entities-- position + mass, velocity
 //     // use add function to add them to the GPU buffers
-//     std::vector<simd::packed::float4> positions(16);
-//     std::vector<simd::packed::float4> velocities(16);
-//     // fill with random float4
+//     std::vector<glm::vec4> positions(16);
+//     std::vector<glm::vec4> velocities(16);
+//     // fill with random vec4
 //     for (uint32_t i = 0; i < 16; ++i) {
-//         positions[i] = simd::packed::float4{static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 10)};
-//         velocities[i] = simd::packed::float4{static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), 0.0f};
+//         positions[i] = glm::vec4{static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 100), static_cast<float>(rand() % 10)};
+//         velocities[i] = glm::vec4{static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), static_cast<float>(rand() % 10), 0.0f};
 //         REQUIRE_NOTHROW(GPU::AddEntity(i, positions[i], velocities[i])); // Add each entity to the GPU buffers
 //         REQUIRE_NOTHROW(bgfx::frame());
 //     }

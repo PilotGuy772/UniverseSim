@@ -16,11 +16,20 @@ int Core::Init() {
         return 1;
     }
 
+#if defined(__linux__)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+
     // Create SDL window
     SDL_Window* window = SDL_CreateWindow(
         APPLICATION_NAME,
         WIDTH,
         HEIGHT,
+#if defined(__linux__)
+        SDL_WINDOW_OPENGL |
+#endif
         (DEFAULT_FULLSCREEN ? SDL_WINDOW_FULLSCREEN : 0)
     );
     if (!window) {
@@ -28,6 +37,9 @@ int Core::Init() {
         SDL_Quit();
         return 1;
     }
+
+    SDL_ShowWindow(window);
+    SDL_Delay(100);
 
     // Prepare bgfx platform data
     bgfx::PlatformData pd{};
@@ -45,24 +57,22 @@ int Core::Init() {
     pd.nwh = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_WIN32_HWND, nullptr);
     pd.ndt = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_WIN32_HINSTANCE, nullptr);
 #elif defined(__linux__)
-    const char* videoDriver = SDL_GetVideoDriver();
-    if (videoDriver == nullptr) {
-        std::cerr << "Unsupported video driver: " << videoDriver << std::endl;
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-    if (strcmp(videoDriver, "x11")) {
+    const char* videoDriver = SDL_GetCurrentVideoDriver();
+    std::cout << "Video driver: " << videoDriver << std::endl;
+
+    if (strcmp(videoDriver, "x11") == 0) {
         pd.ndt = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, nullptr);
-        pd.nwh = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, nullptr);
+        //pd.nwh = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_X11_SCREEN_NUMBER, nullptr);
+        std::cout << "X11 - Display: " << pd.ndt << ", Window: " << pd.nwh << std::endl;
     }
-    else if (strcmp(videoDriver, "wayland")) {
+    else if (strcmp(videoDriver, "wayland") == 0) {
         pd.ndt = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, nullptr);
         pd.nwh = SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, nullptr);
-    } else {
-        std::cerr << "Unsupported video driver: " << videoDriver << std::endl;
-        SDL_DestroyWindow(window);
-        SDL_Quit();
+        std::cout << "Wayland - Display: " << pd.ndt << ", Surface: " << pd.nwh << std::endl;
+    }
+
+    if (pd.ndt == nullptr/* || pd.nwh == nullptr*/) {
+        std::cerr << "ERROR: Failed to get native handles!" << std::endl;
         return 1;
     }
 
@@ -78,7 +88,11 @@ int Core::Init() {
 
     // init BGFX
     bgfx::Init init;
-    init.type = bgfx::RendererType::Count; // auto-detect renderer
+#if defined(__linux)
+    init.type = bgfx::RendererType::OpenGL;
+#elif defined(__APPLE__)
+    init.type = bgfx::RendererType::Metal;
+#endif
     init.platformData = pd;
     init.resolution.width = WIDTH;
     init.resolution.height = HEIGHT;
@@ -95,6 +109,16 @@ int Core::Init() {
     }
 
     std::cout << "BGFX initialized" << std::endl;
+
+    const bgfx::Caps* caps = bgfx::getCaps();
+    if (caps->supported & BGFX_CAPS_COMPUTE) {
+        std::cout << "Compute shaders supported" << std::endl;
+    } else {
+        std::cout << "Compute shaders NOT supported" << std::endl;
+    }
+
+    // Also check OpenGL version being used
+    std::cout << "Renderer: " << bgfx::getRendererName(bgfx::getRendererType()) << std::endl;
 
     // Init complete
     return 0;

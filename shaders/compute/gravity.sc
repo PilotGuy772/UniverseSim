@@ -2,14 +2,15 @@
 
 // REAONLY INPUTS //
 BUFFER_RO(flags, uint, 0);
-BUFFER_RO(positions, float4, 1);
+BUFFER_RO(positions, vec4, 1);
 
 // OUTPUTS //
-BUFFER_WO(accelerations, float4, 2);
+BUFFER_WO(accelerations, vec4, 2);
 
 // UNIFORMS //
 uniform uint numParticles;
 
+NUM_THREADS(64, 1, 1)
 void main() {
     // use Newton's law of gravitation to compute the accelerations
     // remember:
@@ -29,8 +30,8 @@ void main() {
             continue; // skip self
         }
 
-        float4 pos1 = positions[id];
-        float4 pos2 = positions[other];
+        vec4 pos1 = positions[id];
+        vec4 pos2 = positions[other];
 
         // compute the distance squared
         float dx = pos2.x - pos1.x;

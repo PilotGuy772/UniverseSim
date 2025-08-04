@@ -5,7 +5,10 @@
 #include "BufferManager.hpp"
 
 #include <iostream>
+
+#if defined(BX_PLATFORM_OSX)
 #include <__ostream/basic_ostream.h>
+#endif
 
 #include "ComputeBridge.hpp"
 #include "../Core/Application.hpp"
@@ -32,6 +35,7 @@ void GPU::InitBuffers(uint32_t size) {
     AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
     BitmaskBuffer = bgfx::createDynamicVertexBuffer(size, bitmaskLayout, BGFX_BUFFER_COMPUTE_READ);
 
+
     // uniforms
     u_position = bgfx::createUniform("u_position", bgfx::UniformType::Vec4);
     u_velocity = bgfx::createUniform("u_velocity", bgfx::UniformType::Vec4);
@@ -46,7 +50,7 @@ void GPU::InitBuffers(uint32_t size) {
                                                                 BGFX_TEXTURE_READ_BACK | BGFX_TEXTURE_BLIT_DST);
 }
 
-void GPU::AddEntity(const uint32_t index, simd::packed::float4 position_mass, simd::packed::float4 velocity, uint32_t flags) {
+void GPU::AddEntity(const uint32_t index, glm::vec4 position_mass, glm::vec4 velocity, uint32_t flags) {
     if (index >= BufferSize) {
         std::cerr << "Error: Index out of bounds for GPU buffers." << std::endl;
         return;
@@ -57,14 +61,14 @@ void GPU::AddEntity(const uint32_t index, simd::packed::float4 position_mass, si
 
     // use the add_entity shader to add the entity to the GPU buffers
     // arguments: 0. positions_old 1. velocities_old
-    // uniforms: 0. float4 position 1. float4 velocity 2. uint32_t index
+    // uniforms: 0. vec4 position 1. vec4 velocity 2. uint32_t index
     bgfx::setBuffer(0, PositionsBuffer_Old, bgfx::Access::Write);
     bgfx::setBuffer(1, VelocitiesBuffer_Old, bgfx::Access::Write);
 
     bgfx::setUniform(u_position, &position_mass, 1);
     bgfx::setUniform(u_velocity, &velocity, 1);
-    auto indexAsFloat4 = simd::packed::float4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
-    bgfx::setUniform(u_index, &indexAsFloat4, 1);
+    auto indexAsvec4 = glm::vec4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
+    bgfx::setUniform(u_index, &indexAsvec4, 1);
 
     // dispatch
     bgfx::dispatch(Core::VIEW_ID_ENTITY_ADDER, computeEntityAdderProgram,
@@ -97,7 +101,7 @@ void GPU::ReadbackSingleEntity(uint32_t index) {
     // readback single arguments:
     // 0. flags 1. positions_old 2. velocities_old 3. accelerations_old 4. texture
     // uniforms:
-    // 0. float4 index
+    // 0. vec4 index
     if (index >= BufferSize) {
         std::cerr << "Error: Index out of bounds for GPU buffers." << std::endl;
         return;
@@ -109,7 +113,7 @@ void GPU::ReadbackSingleEntity(uint32_t index) {
     bgfx::setBuffer(2, VelocitiesBuffer_Old, bgfx::Access::Read);
     bgfx::setBuffer(3, AccelerationsBuffer_Old, bgfx::Access::Read);
     bgfx::setImage(4, WritableSingleEntityTexture, 0, bgfx::Access::Write);
-    auto indexAsFloat4 = simd::packed::float4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
+    auto indexAsFloat4 = glm::vec4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
     bgfx::setUniform(u_index, &indexAsFloat4, 1);
 
     // dispatch

@@ -9,7 +9,7 @@
 #include "Core/Application.hpp"
 #include "Debug/MetalCapture.h"
 #include <bgfx/bgfx.h>
-#include <simd/packed.h>
+#include <glm/vec4.hpp>
 #include <random>
 #include <thread>
 
@@ -25,8 +25,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
 
     REQUIRE(GPU::BufferSize == bufferSize);
 
-    simd::packed::float4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
-    simd::packed::float4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
+    glm::vec4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
+    glm::vec4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
     uint32_t index = 3;
 
     GPU::AddEntity(index, position_mass, velocity, 1);
@@ -41,7 +41,7 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // check the result with the expected values
-    auto* gpuData = static_cast<simd::packed::float4*>(malloc(3 * sizeof(simd::packed::float4)));
+    auto* gpuData = static_cast<glm::vec4*>(malloc(3 * sizeof(glm::vec4)));
     uint32_t ready = bgfx::readTexture(GPU::ReadbackSingleEntityTexture, gpuData);
 
     while (bgfx::frame() < ready) {
@@ -76,8 +76,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
         REQUIRE(GPU::BufferSize == bufferSize);
 
         WHEN("Adding an entity within bounds") {
-            simd::packed::float4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
-            simd::packed::float4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
+            glm::vec4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
+            glm::vec4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
             uint32_t index = 3;
             REQUIRE_NOTHROW(GPU::AddEntity(index, position_mass, velocity, 1));
 
@@ -98,8 +98,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
         }
 
         WHEN("Adding an entity out of bounds") {
-            simd::packed::float4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
-            simd::packed::float4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
+            glm::vec4 position_mass{1.0f, 2.0f, 3.0f, 4.0f};
+            glm::vec4 velocity{0.5f, 0.5f, 0.5f, 0.0f};
             uint32_t index = bufferSize; // out of bounds
             GPU::AddEntity(index, position_mass, velocity, 1);
 
@@ -147,8 +147,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
         REQUIRE(GPU::Initialize() == 0);
 
         // Generate random entity data
-        std::vector<simd::packed::float4> positions(bufferSize);
-        std::vector<simd::packed::float4> velocities(bufferSize);
+        std::vector<glm::vec4> positions(bufferSize);
+        std::vector<glm::vec4> velocities(bufferSize);
         std::vector<uint32_t> flags(bufferSize, 1);
 
         std::mt19937 rng(42);
@@ -157,8 +157,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
         std::uniform_real_distribution<float> massDist(1.0f, 10.0f);
 
         for (uint32_t i = 0; i < bufferSize; ++i) {
-            positions[i] = simd::packed::float4{posDist(rng), posDist(rng), posDist(rng), massDist(rng)};
-            velocities[i] = simd::packed::float4{velDist(rng), velDist(rng), velDist(rng), 0.0f};
+            positions[i] = glm::vec4{posDist(rng), posDist(rng), posDist(rng), massDist(rng)};
+            velocities[i] = glm::vec4{velDist(rng), velDist(rng), velDist(rng), 0.0f};
             GPU::AddEntity(i, positions[i], velocities[i], flags[i]);
         }
 
@@ -175,8 +175,8 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
             uint32_t testIndex = bufferSize / 2;
 
             // Step 1: Compute initial acceleration using Newton's law of gravitation
-            auto compute_acceleration = [&](uint32_t idx, const std::vector<simd::packed::float4>& pos) {
-                simd::packed::float4 acc{0.0f, 0.0f, 0.0f, 0.0f};
+            auto compute_acceleration = [&](uint32_t idx, const std::vector<glm::vec4>& pos) {
+                glm::vec4 acc{0.0f, 0.0f, 0.0f, 0.0f};
                 float G = 6.67430e-11f; // gravitational constant
                 float mass_i = pos[idx].w;
                 for (uint32_t j = 0; j < pos.size(); j++) {
@@ -195,15 +195,15 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
                 return acc;
             };
 
-            simd::packed::float4 pos = positions[testIndex];
-            simd::packed::float4 vel = velocities[testIndex];
+            glm::vec4 pos = positions[testIndex];
+            glm::vec4 vel = velocities[testIndex];
             float mass = pos.w;
 
             // Step 1: Compute old acceleration
-            simd::packed::float4 accel_old = compute_acceleration(testIndex, positions);
+            glm::vec4 accel_old = compute_acceleration(testIndex, positions);
 
             // Step 2: Update position
-            simd::packed::float4 pos_new = {
+            glm::vec4 pos_new = {
                 pos.x + vel.x * deltaTime + 0.5f * accel_old.x * deltaTime * deltaTime,
                 pos.y + vel.y * deltaTime + 0.5f * accel_old.y * deltaTime * deltaTime,
                 pos.z + vel.z * deltaTime + 0.5f * accel_old.z * deltaTime * deltaTime,
@@ -211,12 +211,12 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
             };
 
             // Step 3: Compute new acceleration from updated positions
-            std::vector<simd::packed::float4> positions_new = positions;
+            std::vector<glm::vec4> positions_new = positions;
             positions_new[testIndex] = pos_new;
-            simd::packed::float4 accel_new = compute_acceleration(testIndex, positions_new);
+            glm::vec4 accel_new = compute_acceleration(testIndex, positions_new);
 
             // Step 4: Update velocity using average acceleration
-            simd::packed::float4 vel_new = {
+            glm::vec4 vel_new = {
                 vel.x + 0.5f * (accel_old.x + accel_new.x) * deltaTime,
                 vel.y + 0.5f * (accel_old.y + accel_new.y) * deltaTime,
                 vel.z + 0.5f * (accel_old.z + accel_new.z) * deltaTime,
@@ -232,7 +232,7 @@ TEST_CASE("Add an entity within bounds", "[GPU]") {
             REQUIRE(bgfx::isValid(GPU::ReadbackSingleEntityTexture));
 
             // Read texture data (assuming RGBA32F format for simplicity)
-            simd::packed::float4 gpuData[3];
+            glm::vec4 gpuData[3];
             bgfx::readTexture(GPU::ReadbackSingleEntityTexture, gpuData, sizeof(gpuData));
 
             // Compare position and velocity
