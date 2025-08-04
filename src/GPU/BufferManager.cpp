@@ -44,9 +44,9 @@ void GPU::InitBuffers(uint32_t size) {
     u_deltaTime = bgfx::createUniform("u_deltaTime", bgfx::UniformType::Vec4);
 
     // textures
-    WritableSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA8,
+    WritableSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA32F,
                                                                  BGFX_TEXTURE_COMPUTE_WRITE);
-    ReadbackSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA8,
+    ReadbackSingleEntityTexture = bgfx::createTexture2D(3, 1, false, 1, bgfx::TextureFormat::RGBA32F,
                                                                 BGFX_TEXTURE_READ_BACK | BGFX_TEXTURE_BLIT_DST);
 }
 
@@ -112,7 +112,7 @@ void GPU::ReadbackSingleEntity(uint32_t index) {
     bgfx::setBuffer(1, PositionsBuffer_Old, bgfx::Access::Read);
     bgfx::setBuffer(2, VelocitiesBuffer_Old, bgfx::Access::Read);
     bgfx::setBuffer(3, AccelerationsBuffer_Old, bgfx::Access::Read);
-    bgfx::setImage(4, WritableSingleEntityTexture, 0, bgfx::Access::Write);
+    bgfx::setImage(4, WritableSingleEntityTexture, 0, bgfx::Access::Write, bgfx::TextureFormat::RGBA32F);
     auto indexAsFloat4 = glm::vec4{static_cast<float>(index), 0.0f, 0.0f, 0.0f};
     bgfx::setUniform(u_index, &indexAsFloat4, 1);
 

@@ -8,7 +8,7 @@ BUFFER_RO(positions, vec4, 1);
 BUFFER_WO(accelerations, vec4, 2);
 
 // UNIFORMS //
-uniform uint numParticles;
+uniform uint u_numParticles;
 
 NUM_THREADS(64, 1, 1)
 void main() {
@@ -25,7 +25,7 @@ void main() {
         return;
     }
 
-    for (uint other = 0; other < numParticles; other++) {
+    for (uint other = 0; other < u_numParticles; other++) {
         if (other == id) {
             continue; // skip self
         }

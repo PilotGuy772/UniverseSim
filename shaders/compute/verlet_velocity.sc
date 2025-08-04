@@ -10,7 +10,7 @@ BUFFER_RO(velocities_old, vec4, 2);
 BUFFER_WO(velocities_new, vec4, 3);
 
 // UNIFORMS //
-uniform float deltaTime;
+uniform float u_deltaTime;
 
 NUM_THREADS(64, 1, 1)
 void main() {
@@ -19,8 +19,8 @@ void main() {
     uint id = gl_GlobalInvocationID.x;
 
     // compute the new velocities based on the old velocities and accelerations
-    velocities_new[id].x = velocities_old[id].x + 0.5 * (accelerations[id].x + accelerations[id].x) * deltaTime;
-    velocities_new[id].y = velocities_old[id].y + 0.5 * (accelerations[id].y + accelerations[id].y) * deltaTime;
-    velocities_new[id].z = velocities_old[id].z + 0.5 * (accelerations[id].z + accelerations[id].z) * deltaTime;
+    velocities_new[id].x = velocities_old[id].x + 0.5 * (accelerations[id].x + accelerations[id].x) * u_deltaTime;
+    velocities_new[id].y = velocities_old[id].y + 0.5 * (accelerations[id].y + accelerations[id].y) * u_deltaTime;
+    velocities_new[id].z = velocities_old[id].z + 0.5 * (accelerations[id].z + accelerations[id].z) * u_deltaTime;
     // w is unused
 }

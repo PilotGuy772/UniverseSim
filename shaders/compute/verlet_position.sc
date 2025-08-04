@@ -12,7 +12,7 @@ BUFFER_RO(positions_old, vec4, 3);
 BUFFER_WO(positions_new, vec4, 4);
 
 // UNIFORMS //
-uniform float deltaTime;
+uniform float u_deltaTime;
 
 NUM_THREADS(64, 1, 1)
 void main() {
@@ -26,9 +26,9 @@ void main() {
         return;
     }
 
-    positions_new[id].x = positions_old[id].x + velocities[id].x * deltaTime + 0.5 * accelerations[id].x * deltaTime * deltaTime;
-    positions_new[id].y = positions_old[id].y + velocities[id].y * deltaTime + 0.5 * accelerations[id].y * deltaTime * deltaTime;
-    positions_new[id].z = positions_old[id].z + velocities[id].z * deltaTime + 0.5 * accelerations[id].z * deltaTime * deltaTime;
+    positions_new[id].x = positions_old[id].x + velocities[id].x * u_deltaTime + 0.5 * accelerations[id].x * u_deltaTime * u_deltaTime;
+    positions_new[id].y = positions_old[id].y + velocities[id].y * u_deltaTime + 0.5 * accelerations[id].y * u_deltaTime * u_deltaTime;
+    positions_new[id].z = positions_old[id].z + velocities[id].z * u_deltaTime + 0.5 * accelerations[id].z * u_deltaTime * u_deltaTime;
     // w doesn't change
     positions_new[id].w = positions_old[id].w; // keep mass unchanged, if needed
 }
