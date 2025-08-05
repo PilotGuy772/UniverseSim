@@ -25,7 +25,7 @@ void UI::SetMouseLocked(bool locked) {
     }
 }
 
-void UI::HandleEvent(const SDL_Event& event) {
+void UI::HandleMouseEvent(const SDL_Event& event) {
     switch (event.type) {
         case SDL_EVENT_MOUSE_MOTION:
             if (MouseLocked) {

@@ -23,7 +23,7 @@ namespace UI {
 
     // SDL event handling
     void SetMouseLocked(bool locked);
-    void HandleEvent(const SDL_Event& event);
+    void HandleMouseEvent(const SDL_Event& event);
     void HandleMouseMotion(float dx, float dy);
     void HandleMouseWheel(float delta);
 
