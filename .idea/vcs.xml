@@ -2,5 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/bgfx.cmake-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/bgfx.cmake-src/bgfx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/bgfx.cmake-src/bimg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/bgfx.cmake-src/bx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/catch2-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build-xcode/_deps/sdl3-src" vcs="Git" />
   </component>
 </project>
