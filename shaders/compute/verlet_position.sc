@@ -21,7 +21,7 @@ void main() {
     uint id = gl_GlobalInvocationID.x;
 
     // check if the bitmask has zero in the first position
-    if ((flags[id] & 0x1) == 0) {
+    if ((flags[id] & 0x01) == 0) {
         // this particle is not active, skip it
         return;
     }

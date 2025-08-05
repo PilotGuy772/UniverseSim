@@ -80,16 +80,14 @@ void GPU::DispatchGravity() {
     // uniform uint numParticles
 
     // set buffers
-    bgfx::setBuffer(0, GPU::BitmaskBuffer, bgfx::Access::Read);
-    bgfx::setBuffer(1, GPU::PositionsBuffer_Old, bgfx::Access::Read);
-    bgfx::setBuffer(2, GPU::AccelerationsBuffer_New, bgfx::Access::Write);
-    auto bufferSizeAsFloat4 = glm::vec4{static_cast<float>(BufferSize), 0.0f, 0.0f, 0.0f};
-    bgfx::setUniform(u_numParticles, &bufferSizeAsFloat4, 1);
+    bgfx::setBuffer(0, BitmaskBuffer, bgfx::Access::Read);
+    bgfx::setBuffer(1, PositionsBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(2, AccelerationsBuffer_New, bgfx::Access::ReadWrite);
 
     // dispatch
     bgfx::dispatch(Core::VIEW_ID_COMPUTE_GRAVITY,
         computeGravityProgram,
-        BufferSize / 64, 1, 1);
+        ceil(BufferSize / 16), ceil(BufferSize / 16), 1);
 }
 
 void GPU::DispatchVerletPosition(float deltaTime) {

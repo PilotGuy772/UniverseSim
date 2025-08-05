@@ -9,7 +9,8 @@ file(GLOB TEST_SOURCES CONFIGURE_DEPENDS
 add_executable(UniverseSimTests ${TEST_SOURCES}
         Core.test.cpp
         GPU.test.cpp
-        EntityManagement.test.cpp)
+        EntityManagement.test.cpp
+        Simulation.test.cpp)
 
 # Fetch Catch2
 include(FetchContent)
