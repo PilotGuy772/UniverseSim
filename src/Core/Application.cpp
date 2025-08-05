@@ -10,7 +10,9 @@
 #include <bgfx/platform.h>
 
 int Core::Init() {
+#if defined(__linux__)
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "x11");
+#endif
 
     // Init SDL3
     if (!SDL_Init(SDL_INIT_VIDEO)) {

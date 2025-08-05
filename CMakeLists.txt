@@ -8,12 +8,12 @@ project(UniverseSim)
 # Below, see variables you MUST SET APPROPRIATELY for your compiler and environment.
 
 # Platform you're compiling FOR. This must be one of "osx", "linux", or "windows". Windows is not supported officially, but *should* work.
-set(PLATFORM linux)
+set(PLATFORM osx)
 # Shader profile types to compile for. These must be selected for your system and graphics API. Use any selection of "430", "essl", "spirv", "metal".
 # Which shader type is used in actual execution is determined by the graphics API and platform.
-set(SHADER_PLATFORMS 430)
+set(SHADER_PLATFORMS metal)
 # Extra directories to include. For macOS, you MUST include the directory where `glm` is installed, e.g., `/opt/homebrew/include/`
-set(EXTRA_INCLUDE_DIRS "")
+set(EXTRA_INCLUDE_DIRS "/opt/homebrew/include/")
 
 
 set(CMAKE_CXX_STANDARD 20)
