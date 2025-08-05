@@ -37,11 +37,18 @@ FetchContent_Declare(
 
 FetchContent_Declare(
         glm
-        GIT_REPOSITORY	https://github.com/g-truc/glm.git
-        GIT_TAG 	bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
+)
+
+FetchContent_Declare(
+        stopwatch
+        GIT_REPOSITORY https://github.com/ManWithABike/Stopwatch
+        GIT_TAG fe927014b8ee0e0cbfc19f593b4bcb9f6d62c958
 )
 
 FetchContent_MakeAvailable(glm)
+FetchContent_MakeAvailable(stopwatch)
 FetchContent_MakeAvailable(SDL3)
 FetchContent_MakeAvailable(bgfx.cmake)
 
@@ -136,6 +143,12 @@ add_library(UniverseSim_lib
         src/Simulation/EntityManager.hpp
         src/GPU/BufferManager.cpp
         src/GPU/BufferManager.hpp
+        src/Simulation/Simulation.cpp
+        src/Simulation/Simulation.hpp
+        src/UI/InputHandler.cpp
+        src/UI/InputHandler.hpp
+        src/UI/CameraHandler.cpp
+        src/UI/CameraHandler.hpp
 )
 
 add_executable(UniverseSim src/main.cpp)
@@ -151,8 +164,8 @@ target_include_directories(UniverseSim_lib PUBLIC
         ${bgfx.cmake_SOURCE_DIR}/bx/include
         ${bgfx.cmake_SOURCE_DIR}/bimg/include
         ${glm_SOURCE_DIR}
+        ${stopwatch_SOURCE_DIR}/include
         ${SHADER_OUTPUT_BASE_DIR}
-        #${EXTRA_INCLUDE_DIRS}
 )
 
 target_link_libraries(UniverseSim_lib PUBLIC SDL3::SDL3 bgfx bimg bx glm::glm)

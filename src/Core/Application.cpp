@@ -27,7 +27,7 @@ int Core::Init() {
 #endif
 
     // Create SDL window
-    SDL_Window* window = SDL_CreateWindow(
+    Window = SDL_CreateWindow(
         APPLICATION_NAME,
         WIDTH,
         HEIGHT,
@@ -36,21 +36,23 @@ int Core::Init() {
 #endif
         (DEFAULT_FULLSCREEN ? SDL_WINDOW_FULLSCREEN : 0)
     );
-    if (!window) {
+    if (!Window) {
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return 1;
     }
 
-    SDL_ShowWindow(window);
+
+
+    SDL_ShowWindow(Window);
     SDL_Delay(100);
 
     // Prepare bgfx platform data
     bgfx::PlatformData pd{};
-    SDL_PropertiesID winprops = SDL_GetWindowProperties(window);
+    SDL_PropertiesID winprops = SDL_GetWindowProperties(Window);
     if (winprops == 0) {
         std::cerr << "Failed to get window properties! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(window);
+        SDL_DestroyWindow(Window);
         SDL_Quit();
         return 1;
     }
@@ -81,7 +83,7 @@ int Core::Init() {
     }
 
 #elif defined(__APPLE__)
-    pd.nwh = SDL_Metal_GetLayer(SDL_Metal_CreateView(window));//SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
+    pd.nwh = SDL_Metal_GetLayer(SDL_Metal_CreateView(Window));//SDL_GetPointerProperty(winprops, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
     pd.ndt = nullptr;
 #endif
 
@@ -107,7 +109,7 @@ int Core::Init() {
 
     if (!bgfx::init(init)) {
         std::cerr << "Failed to initialize BGFX!" << std::endl;
-        SDL_DestroyWindow(window);
+        SDL_DestroyWindow(Window);
         SDL_Quit();
         return 1;
     }
