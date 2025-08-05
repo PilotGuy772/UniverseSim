@@ -18,22 +18,18 @@ void GPU::InitBuffers(uint32_t size) {
     // initialize all buffers with the given size
     BufferSize = size;
 
-    bgfx::VertexLayout layout;
-    layout.begin()
+    VertexLayout = bgfx::VertexLayout();
+    VertexLayout.begin()
         .add(bgfx::Attrib::Position, 4, bgfx::AttribType::Float)
         .end();
-    bgfx::VertexLayout bitmaskLayout;
-    bitmaskLayout.begin()
-        .add(bgfx::Attrib::TexCoord0, 1, bgfx::AttribType::Float)
-        .end();
 
-    PositionsBuffer_Old = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    PositionsBuffer_New = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    VelocitiesBuffer_Old = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    VelocitiesBuffer_New = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    AccelerationsBuffer_Old = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(size, layout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
-    BitmaskBuffer = bgfx::createDynamicVertexBuffer(size, bitmaskLayout, BGFX_BUFFER_COMPUTE_READ);
+    PositionsBuffer_Old = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    PositionsBuffer_New = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    VelocitiesBuffer_Old = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    VelocitiesBuffer_New = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_Old = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    BitmaskBuffer = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ);
 
 
     // uniforms
