@@ -40,6 +40,17 @@ int GPU::Initialize() {
     bgfx::setViewName(Core::VIEW_ID_COMPUTE_VELOCITY, "computeVerletVelocity");
     bgfx::setViewClear(Core::VIEW_ID_COMPUTE_VELOCITY, BGFX_CLEAR_NONE);
 
+    bgfx::setViewName(Core::VIEW_ID_COMPUTE_READBACK_SINGLE, "computeReadbackSingle");
+    bgfx::setViewClear(Core::VIEW_ID_COMPUTE_READBACK_SINGLE, BGFX_CLEAR_NONE);
+
+    bgfx::setViewName(Core::VIEW_ID_ENTITY_ADDER, "entityAdder");
+    bgfx::setViewClear(Core::VIEW_ID_ENTITY_ADDER, BGFX_CLEAR_NONE);
+
+    bgfx::setViewName(Core::VIEW_ID_MAIN, "mainRenderPass");
+    bgfx::setViewClear(Core::VIEW_ID_MAIN, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+    bgfx::setViewRect(Core::VIEW_ID_MAIN, 0, 0, Core::DEFAULT_WIDTH, Core::DEFAULT_HEIGHT);
+
+
     auto createComputeProgram = [](const void* shaderData, size_t shaderSize, const char* errorMsg) {
         auto shader = bgfx::createShader(bgfx::makeRef(shaderData, shaderSize));
         auto program = bgfx::createProgram(shader);

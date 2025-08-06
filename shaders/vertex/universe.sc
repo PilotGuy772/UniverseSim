@@ -5,7 +5,7 @@ $output v_color0, v_texcoord0
 #include <bgfx_shader.sh>
 //#include "shaderlib.sh"
 
-uniform mat4 u_viewProj;
+//uniform mat4 u_modelViewProj;
 
 void main() {
     // transform vertex
@@ -13,6 +13,6 @@ void main() {
     //gl_PointSize = sqrt(a_texcoord0) * 10.0;
 
     // pass data to frag shader
-    v_color0 = vec4(1.0, 0.5, 0.0, 1.0); // orange
+    v_color0 = vec4(0.0, 1.0, 0.0, 1.0);
     v_texcoord0 = a_texcoord0;
 }

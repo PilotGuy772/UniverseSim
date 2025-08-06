@@ -11,15 +11,23 @@
 #include "../UI/CameraHandler.hpp"
 #include "../UI/InputHandler.hpp"
 #include "../UI/Render.hpp"
+#include "bgfx/platform.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_timer.h"
 
 int Simulation::StartSimulation() {
+    //bgfx::renderFrame();
     int status = Core::Init();
     if (status != 0) return status;
-    GPU::Initialize();
+    status = GPU::Initialize();
+    if (status != 0) return status;
     GPU::InitBuffers(Core::STARTING_BUFFER_SIZE);
-
+    // InitializeEntities(Core::STARTING_BUFFER_SIZE);
+    status = UI::InitializeRenderer();
+    if (status != 0) return status;
+    // QueueNewEntity(glm::vec3(0.0f), 1.0f, glm::vec3(0.0f), 1 << 0);
+    RunMainThread();
+    return 0;
 }
 
 void Simulation::RunMainThread() {
@@ -54,27 +62,27 @@ void Simulation::RunMainThread() {
         }
 
         // dispatch position
-        GPU::DispatchVerletPosition(deltaTime);
-
-        // dispatch gravity
-        GPU::DispatchGravity();
-
-        // dispatch velocity
-        GPU::DispatchVerletVelocity(deltaTime);
+        // GPU::DispatchVerletPosition(deltaTime);
+        //
+        // // dispatch gravity
+        // GPU::DispatchGravity();
+        //
+        // // dispatch velocity
+        // GPU::DispatchVerletVelocity(deltaTime);
 
         // check for adding new entities
-        bool resizeBuffersAfterFrame = false;
-        if (EntityQueue.size() > 0) {
-            int result = AddNextEntityFromQueue();
-            if (result < 0) {
-                resizeBuffersAfterFrame = true;
-            }
-        }
+        // bool resizeBuffersAfterFrame = false;
+        // if (EntityQueue.size() > 0) {
+        //     int result = AddNextEntityFromQueue();
+        //     if (result < 0) {
+        //         resizeBuffersAfterFrame = true;
+        //     }
+        // }
 
         // check for removing entities
-        if (EntityDeathQueue.size() > 0) {
-            KillNextEntityFromQueue();
-        }
+        // if (EntityDeathQueue.size() > 0) {
+        //     KillNextEntityFromQueue();
+        // }
 
         // render scene
         UI::RenderScene();
@@ -83,9 +91,11 @@ void Simulation::RunMainThread() {
         bgfx::frame();
 
         // swap buffers
-        GPU::SwapBuffers();
+        //GPU::SwapBuffers();
 
-        if (resizeBuffersAfterFrame) GPU::ResizeBuffers();
+        // if (resizeBuffersAfterFrame) GPU::ResizeBuffers();
     }
+
+    std::cout << "App exiting gracefully..." << std::endl;
 }
 

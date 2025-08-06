@@ -4,6 +4,8 @@
 
 #include "CameraHandler.hpp"
 
+#include <iostream>
+
 #include "../Core/Application.hpp"
 #include "../Core/ApplicationConfig.hpp"
 
@@ -64,6 +66,8 @@ void UI::RotateCamera(float pitch, float yaw) {
     CameraOrientation = yawRot * CameraOrientation;
     CameraOrientation = pitchRot * CameraOrientation;
     CameraOrientation = glm::normalize(CameraOrientation);
+
+    std::cout << "Moved camera, new orientation: (" << CameraOrientation.x << ", " << CameraOrientation.y << ", " << CameraOrientation.z << ", " << CameraOrientation.w << ")" << std::endl;
 }
 
 glm::vec3 UI::GetUpVector() {

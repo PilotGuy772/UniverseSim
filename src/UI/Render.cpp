@@ -4,6 +4,8 @@
 
 #include "Render.hpp"
 
+#include <iostream>
+
 #include "CameraHandler.hpp"
 #include "../Core/ApplicationConfig.hpp"
 #include "../GPU/BufferManager.hpp"
@@ -17,8 +19,21 @@
 int UI::InitializeRenderer() {
     const bgfx::ShaderHandle vs = bgfx::createShader(bgfx::makeRef(vertex_universe, sizeof(vertex_universe)));
     const bgfx::ShaderHandle fs = bgfx::createShader(bgfx::makeRef(fragment_universe, sizeof(fragment_universe)));
-    ShaderProgram = bgfx::createProgram(vs, fs);
-    if (!bgfx::isValid(ShaderProgram)) { return 1; }
+    if (!bgfx::isValid(vs) || !bgfx::isValid(fs)) {
+        std::cerr << "Error loading shader handles" << std::endl;
+        return 1;
+    }
+    ShaderProgram = bgfx::createProgram(vs, fs, true);
+    if (!bgfx::isValid(ShaderProgram)) {
+        std::cerr << "Error creating shader program" << std::endl;
+        return 1;
+    }
+
+    //ViewProjMatrixUniform = bgfx::createUniform("u_modelViewProj", bgfx::UniformType::Mat4);
+    // if (!bgfx::isValid(ViewProjMatrixUniform)) {
+    //     std::cerr << "Error creating uniform matrix" << std::endl;
+    //     return 1;
+    // }
     return 0;
 }
 
@@ -27,8 +42,12 @@ void UI::RenderScene() {
     bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old);
 
     // set viewproj uniform
-    glm::mat4 matrix = GetProjectionMatrix() * GetViewMatrix();
-    bgfx::setUniform(ViewProjMatrixUniform, &matrix);
+    glm::mat4 projmat = GetProjectionMatrix();
+    glm::mat4 viewmat = GetViewMatrix();
+
+    glm::mat4 matrix = projmat * viewmat;
+    //bgfx::setUniform(ViewProjMatrixUniform, &matrix);
+    //bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat, &projmat);
 
     // set state
     bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_POINTS);

@@ -33,6 +33,8 @@ int Core::Init() {
         HEIGHT,
 #if defined(__linux__)
         SDL_WINDOW_OPENGL |
+#elif defined(__APPLE__)
+        SDL_WINDOW_METAL |
 #endif
         (DEFAULT_FULLSCREEN ? SDL_WINDOW_FULLSCREEN : 0)
     );
@@ -102,7 +104,7 @@ int Core::Init() {
     init.platformData = pd;
     init.resolution.width = WIDTH;
     init.resolution.height = HEIGHT;
-    init.resolution.reset = BGFX_RESET_VSYNC; // enable vsync
+    //init.resolution.reset = BGFX_RESET_VSYNC; // enable vsync
 
     std::cout << "BGFX Platform Data written" << std::endl;
 
@@ -115,6 +117,8 @@ int Core::Init() {
     }
 
     std::cout << "BGFX initialized" << std::endl;
+
+    bgfx::setDebug(BGFX_DEBUG_TEXT | BGFX_DEBUG_STATS);
 
     const bgfx::Caps* caps = bgfx::getCaps();
     if (caps->supported & BGFX_CAPS_COMPUTE) {

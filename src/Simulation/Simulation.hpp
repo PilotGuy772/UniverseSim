@@ -4,7 +4,7 @@
 
 #ifndef SIMULATION_HPP
 #define SIMULATION_HPP
-#include <stopwatch/Stopwatch.hpp>
+#include "Stopwatch.hpp"
 #include <glm/glm.hpp>
 
 namespace Simulation {

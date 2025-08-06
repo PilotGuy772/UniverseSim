@@ -12,8 +12,6 @@ set(PLATFORM osx)
 # Shader profile types to compile for. These must be selected for your system and graphics API. Use any selection of "430", "essl", "spirv", "metal".
 # Which shader type is used in actual execution is determined by the graphics API and platform.
 set(SHADER_PLATFORMS metal)
-# Extra directories to include. For macOS, you MUST include the directory where `glm` is installed, e.g., `/opt/homebrew/include/`
-set(EXTRA_INCLUDE_DIRS "/opt/homebrew/include/")
 
 
 set(CMAKE_CXX_STANDARD 20)
@@ -41,14 +39,14 @@ FetchContent_Declare(
         GIT_TAG bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
 )
 
-FetchContent_Declare(
-        stopwatch
-        GIT_REPOSITORY https://github.com/ManWithABike/Stopwatch
-        GIT_TAG fe927014b8ee0e0cbfc19f593b4bcb9f6d62c958
-)
+#FetchContent_Declare(
+#        stopwatch
+#        GIT_REPOSITORY https://github.com/ManWithABike/Stopwatch
+#        GIT_TAG fe927014b8ee0e0cbfc19f593b4bcb9f6d62c958
+#)
 
 FetchContent_MakeAvailable(glm)
-FetchContent_MakeAvailable(stopwatch)
+#FetchContent_MakeAvailable(stopwatch)
 FetchContent_MakeAvailable(SDL3)
 FetchContent_MakeAvailable(bgfx.cmake)
 
@@ -117,7 +115,7 @@ function(compile_shader_list shader_type shader_files out_list_var)
     set(${out_list_var} ${compiled_headers} PARENT_SCOPE)
 endfunction()
 
-compile_shader_list("compute"  COMPUTE_SHADERS COMPUTE_HEADERS)
+compile_shader_list("compute"  COMPUTE_SHADERS  COMPUTE_HEADERS)
 compile_shader_list("vertex"   VERTEX_SHADERS   VERTEX_HEADERS)
 compile_shader_list("fragment" FRAGMENT_SHADERS FRAGMENT_HEADERS)
 
@@ -167,7 +165,7 @@ target_include_directories(UniverseSim_lib PUBLIC
         ${bgfx.cmake_SOURCE_DIR}/bx/include
         ${bgfx.cmake_SOURCE_DIR}/bimg/include
         ${glm_SOURCE_DIR}
-        ${stopwatch_SOURCE_DIR}/include
+#        ${stopwatch_SOURCE_DIR}/include
         ${SHADER_OUTPUT_BASE_DIR}
 )
 
