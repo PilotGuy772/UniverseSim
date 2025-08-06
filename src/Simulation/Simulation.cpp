@@ -61,7 +61,24 @@ void Simulation::RunMainThread() {
         // dispatch velocity
         GPU::DispatchVerletVelocity(deltaTime);
 
-        //
+        // check for adding new entities
+        bool resizeBuffersAfterFrame = false;
+        if (EntityQueue.size() > 0) {
+            int result = AddNextEntityFromQueue();
+            if (result < 0) {
+                resizeBuffersAfterFrame = true;
+            }
+        }
+
+        // check for removing entities
+        if (EntityDeathQueue.size() > 0) {
+            KillNextEntityFromQueue();
+        }
+
+
+
+
+        if (resizeBuffersAfterFrame) GPU::ResizeBuffers();
     }
 }
 

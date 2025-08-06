@@ -27,6 +27,12 @@ void Simulation::KillEntity(const uint32_t entityHandle) {
     GPU::KillEntity(gpuIndex);
 }
 
+void Simulation::KillNextEntityFromQueue() {
+    uint32_t handle = EntityDeathQueue.front();
+    EntityDeathQueue.pop();
+    KillEntity(handle);
+}
+
 int Simulation::AddNextEntityFromQueue() {
     if (GpuIndices.size() < 1) return -1;
 

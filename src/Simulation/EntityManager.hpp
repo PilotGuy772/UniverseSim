@@ -24,12 +24,14 @@ namespace Simulation {
     };
 
     inline std::queue<NewEntity> EntityQueue;
+    inline std::queue<uint32_t> EntityDeathQueue;
     inline std::vector<Entity> Entities;     // handle -> Entity
     inline std::queue<uint32_t> GpuIndices; // list of available indices in the GPU buffers
 
     void InitializeEntities(int bufferSize);
     void QueueNewEntity(glm::vec3 newPosition, float newMass, glm::vec3 newVelocity, uint32_t newFlags = 1);
     void KillEntity(uint32_t entityHandle);
+    void KillNextEntityFromQueue();
 
     /**
      * Add the first entity from the queue to the data buffers. Must call bgfx::frame() between each call.
