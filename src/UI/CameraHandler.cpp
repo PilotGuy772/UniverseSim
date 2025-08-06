@@ -58,8 +58,8 @@ void UI::HandleMouseWheel(float delta) {
 void UI::RotateCamera(float pitch, float yaw) {
     glm::vec3 right = GetRightVector();
 
-    glm::quat yawRot = glm::angleAxis(yaw, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::quat pitchRot = glm::angleAxis(pitch, right);
+    glm::quat yawRot = glm::angleAxis(glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::quat pitchRot = glm::angleAxis(glm::radians(pitch), right);
 
     CameraOrientation = yawRot * CameraOrientation;
     CameraOrientation = pitchRot * CameraOrientation;

@@ -10,7 +10,9 @@ add_executable(UniverseSimTests ${TEST_SOURCES}
         Core.test.cpp
         GPU.test.cpp
         EntityManagement.test.cpp
-        Simulation.test.cpp)
+        SimulationLoop/Simulation.test.cpp
+        SimulationLoop/Inputs.test.cpp
+        SimulationLoop/EntityControlAndBufferManagement.test.cpp)
 
 # Fetch Catch2
 include(FetchContent)

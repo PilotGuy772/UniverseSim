@@ -40,7 +40,7 @@ void Simulation::RunMainThread() {
 
     while (running) {
         // reset stopwatch for deltaTime
-        float deltaTime = Stopwatch.elapsed<stopwatch::seconds>();
+        const float deltaTime = Stopwatch.elapsed<stopwatch::seconds>();
         Stopwatch.start();
 
         // check SDL events
