@@ -20,7 +20,8 @@ void GPU::InitBuffers(uint32_t size) {
 
     VertexLayout = bgfx::VertexLayout();
     VertexLayout.begin()
-        .add(bgfx::Attrib::Position, 4, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 1, bgfx::AttribType::Float)
         .end();
 
     PositionsBuffer_Old = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);

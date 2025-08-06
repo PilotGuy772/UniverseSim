@@ -71,11 +71,11 @@ set(COMPUTE_SHADERS
 )
 
 set(VERTEX_SHADERS
-    # none yet
+    ${SHADER_SOURCE_DIR}/vertex/universe.sc
 )
 
 set(FRAGMENT_SHADERS
-    # none yet
+    ${SHADER_SOURCE_DIR}/fragment/universe.sc
 )
 
 # Platforms to generate headers for
@@ -150,6 +150,8 @@ add_library(UniverseSim_lib
         src/UI/InputHandler.hpp
         src/UI/CameraHandler.cpp
         src/UI/CameraHandler.hpp
+        src/UI/Render.cpp
+        src/UI/Render.hpp
 )
 
 add_executable(UniverseSim src/main.cpp)

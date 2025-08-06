@@ -10,6 +10,7 @@
 #include "../GPU/ComputeBridge.hpp"
 #include "../UI/CameraHandler.hpp"
 #include "../UI/InputHandler.hpp"
+#include "../UI/Render.hpp"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_timer.h"
 
@@ -75,8 +76,14 @@ void Simulation::RunMainThread() {
             KillNextEntityFromQueue();
         }
 
+        // render scene
+        UI::RenderScene();
 
+        // frame!
+        bgfx::frame();
 
+        // swap buffers
+        GPU::SwapBuffers();
 
         if (resizeBuffersAfterFrame) GPU::ResizeBuffers();
     }
