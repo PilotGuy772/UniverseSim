@@ -13,6 +13,7 @@
 #include <metal/compute_verlet_velocity.bin.h>
 #include <metal/compute_entity_adder.bin.h>
 #include <metal/compute_readback_single.bin.h>
+#include <metal/compute_buffer_copier.bin.h>
 #elif defined(__linux__)
 #if defined(SHADER_TYPE_SPIRV)
 #include <spirv/compute_gravity.bin.h>
@@ -68,6 +69,10 @@ int GPU::Initialize() {
     std::tie(computeReadbackSingleShader, computeReadbackSingleProgram) =
         createComputeProgram(compute_readback_single, sizeof(compute_readback_single), "Failed to create compute shader for Readback Single.");
     if (!bgfx::isValid(computeReadbackSingleShader) || !bgfx::isValid(computeReadbackSingleProgram)) return -1;
+
+    std::tie(computeBufferCopierShader, computeBufferCopierProgram) =
+        createComputeProgram(compute_buffer_copier, sizeof(compute_buffer_copier), "Failed to create compute shader for Buffer Copier.");
+    if (!bgfx::isValid(computeBufferCopierShader) || !bgfx::isValid(computeBufferCopierProgram)) return -1;
 
     return 0;
 }

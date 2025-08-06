@@ -85,7 +85,37 @@ void GPU::KillEntity(uint32_t index) {
 }
 
 void GPU::ResizeBuffers() {
-    // not implemented (yet) //
+    uint32_t newSize = (BufferSize + Simulation::EntityQueue.size()) * 2;
+    bgfx::DynamicVertexBufferHandle newFlagsBuffer = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ);
+    PositionsBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    VelocitiesBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+
+    bgfx::setBuffer(0, PositionsBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(1, VelocitiesBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(2, AccelerationsBuffer_Old, bgfx::Access::Read);
+    bgfx::setBuffer(3, BitmaskBuffer, bgfx::Access::Read);
+
+    bgfx::setBuffer(4, PositionsBuffer_New, bgfx::Access::Write);
+    bgfx::setBuffer(5, VelocitiesBuffer_New, bgfx::Access::Write);
+    bgfx::setBuffer(6, AccelerationsBuffer_New, bgfx::Access::Write);
+    bgfx::setBuffer(7, newFlagsBuffer, bgfx::Access::Write);
+
+    bgfx::dispatch(Core::VIEW_ID_ENTITY_ADDER, computeBufferCopierProgram, BufferSize, 1, 1);
+    bgfx::frame();
+
+    // now swap buffers and recreate *_New buffers again
+    std::swap(BitmaskBuffer, newFlagsBuffer);
+    SwapBuffers();
+    PositionsBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+    VelocitiesBuffer_New = bgfx::createDynamicVertexBuffer(newSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
+
+    // fill available GPU indices with newly created space
+    for (int i = BufferSize; i < newSize; i++) {
+        Simulation::GpuIndices.push(i);
+    }
+    BufferSize = newSize;
 }
 
 void GPU::GetReadableTexture() {

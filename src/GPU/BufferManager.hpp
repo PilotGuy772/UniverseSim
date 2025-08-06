@@ -56,7 +56,7 @@ namespace GPU {
     void KillEntity(uint32_t index);
 
     /**
-     * @brief Doubles the size of all buffers.
+     * @brief Doubles the size of all buffers. This must be called after buffers have been swapped so the latest data is in the *_Old buffers.
      * @warning This is an extremely computationally intensive operation and will pause execution for multiple frames, because a special
      * compute shader must be used to copy the data from the old buffers to the new ones. This should only be used in moderation.
      */

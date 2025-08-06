@@ -11,8 +11,13 @@ namespace Simulation {
 
     inline stopwatch::Stopwatch Stopwatch;
     inline glm::vec3 CameraPosition{0.0f, 0.0f, 0.0f};
-    inline
 
+
+    /**
+     * Master start function. Call this from main and everything will be initialized from here.
+     * @return Return code from the app.
+     */
+    int StartSimulation();
     void RunMainThread();
 
 }

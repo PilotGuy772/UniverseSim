@@ -67,6 +67,7 @@ set(COMPUTE_SHADERS
     ${SHADER_SOURCE_DIR}/compute/verlet_velocity.sc
     ${SHADER_SOURCE_DIR}/compute/entity_adder.sc
     ${SHADER_SOURCE_DIR}/compute/readback_single.sc
+    ${SHADER_SOURCE_DIR}/compute/buffer_copier.sc
 )
 
 set(VERTEX_SHADERS
