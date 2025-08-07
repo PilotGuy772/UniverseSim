@@ -19,7 +19,7 @@ namespace UI {
     inline int MouseY = 0;
 
     inline float CameraMoveSpeed = 10.0f;
-    inline float CameraRotationSensitivity = 1.0f;
+    inline float CameraRotationSensitivity = 0.33f;
 
     // SDL event handling
     void SetMouseLocked(bool locked);

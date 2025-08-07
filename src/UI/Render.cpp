@@ -47,7 +47,7 @@ void UI::RenderScene() {
 
     glm::mat4 matrix = projmat * viewmat;
     //bgfx::setUniform(ViewProjMatrixUniform, &matrix);
-    //bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat, &projmat);
+    bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat, &projmat);
 
     // set state
     bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_POINTS);
