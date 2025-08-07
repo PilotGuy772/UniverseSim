@@ -10,8 +10,11 @@
 namespace UI {
     inline bgfx::ProgramHandle ShaderProgram;
     inline bgfx::UniformHandle ViewProjMatrixUniform;
+    inline bgfx::VertexBufferHandle QuadVB;
+    inline bgfx::IndexBufferHandle QuadIB;
 
     int InitializeRenderer();
+    void CreateQuadGeometry();
     void RenderScene();
 }
 
