@@ -9,6 +9,7 @@
 #include "CameraHandler.hpp"
 #include "../Core/ApplicationConfig.hpp"
 #include "../GPU/BufferManager.hpp"
+#include "bx/math.h"
 #include "glm/glm.hpp"
 
 #if defined(__APPLE__)
@@ -47,13 +48,30 @@ void UI::CreateQuadGeometry() {
     };
 
     QuadVertex vertices[] = {
-        {-1.0f, -1.0f, 0.0f, 0.0f, 0.0f},
-        { 1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
-        { 1.0f,  1.0f, 0.0f, 1.0f, 1.0f},
-        {-1.0f,  1.0f, 0.0f, 0.0f, 1.0f}
+        {-1.0f,  1.0f,  1.0f, 0.0f, 0.0f },
+        { 1.0f,  1.0f,  1.0f, 0.0f, 0.0f },
+        {-1.0f, -1.0f,  1.0f, 0.0f, 0.0f },
+        { 1.0f, -1.0f,  1.0f, 0.0f, 0.0f },
+        {-1.0f,  1.0f, -1.0f, 0.0f, 0.0f },
+        { 1.0f,  1.0f, -1.0f, 0.0f, 0.0f },
+        {-1.0f, -1.0f, -1.0f, 0.0f, 0.0f },
+        { 1.0f, -1.0f, -1.0f, 0.0f, 0.0f },
     };
 
-    uint16_t indices[] = {0, 1, 2, 0, 2, 3};
+    uint16_t indices[] = {
+        0, 1, 2,
+        1, 3, 2,
+        4, 6, 5,
+        5, 6, 7,
+        0, 2, 4,
+        4, 2, 6,
+        1, 5, 3,
+        5, 7, 3,
+        0, 4, 1,
+        4, 5, 1,
+        2, 3, 6,
+        6, 3, 7,
+    };
 
     bgfx::VertexLayout quadLayout;
     quadLayout.begin()
@@ -71,17 +89,16 @@ void UI::RenderScene() {
     bgfx::setIndexBuffer(QuadIB);
 
     // set vertex buffer
-    bgfx::setVertexBuffer(1, GPU::PositionsBuffer_Old);
+    bgfx::setInstanceDataBuffer(GPU::PositionsBuffer_Old, 0, Simulation::Entities.size());
 
     // set viewproj uniform
     glm::mat4 projmat = GetProjectionMatrix();
     glm::mat4 viewmat = GetViewMatrix();
 
-    glm::mat4 matrix = projmat * viewmat;
-    bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat, &projmat);
+    bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat[0][0], &projmat[0][0]);
 
     // set state
-    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_BLEND_ALPHA);
+    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_LINES);
 
     // draw!
     bgfx::submit(Core::VIEW_ID_MAIN, ShaderProgram);

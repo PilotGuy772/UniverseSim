@@ -150,6 +150,7 @@ void GPU::SwapBuffers() {
     std::swap(VelocitiesBuffer_Old, VelocitiesBuffer_New);
     std::swap(AccelerationsBuffer_Old, AccelerationsBuffer_New);
     // Accelerations_Old will be used for verlet calculations, but Accelerations_New must be zeroed out
+    bgfx::destroy(AccelerationsBuffer_New);
     AccelerationsBuffer_New = bgfx::createDynamicVertexBuffer(BufferSize, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
 }
 
