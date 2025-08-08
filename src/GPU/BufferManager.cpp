@@ -20,8 +20,8 @@ void GPU::InitBuffers(uint32_t size) {
 
     VertexLayout = bgfx::VertexLayout();
     VertexLayout.begin()
-        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-        .add(bgfx::Attrib::TexCoord1, 1, bgfx::AttribType::Float)
+        //.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord1, 4, bgfx::AttribType::Float)
         .end();
     VertexLayoutHandle = bgfx::createVertexLayout(VertexLayout);
 

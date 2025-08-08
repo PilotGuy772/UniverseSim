@@ -17,8 +17,8 @@
 #include <metal/fragment_universe.bin.h>
 #endif
 
-inline bgfx::VertexBufferHandle colorBuffer;
-inline bgfx::VertexLayoutHandle colorLayoutHandle;
+inline bgfx::VertexBufferHandle dummyBuffer;
+inline bgfx::VertexLayoutHandle dummyLayoutHandle;
 
 int UI::InitializeRenderer() {
     const bgfx::ShaderHandle vs = bgfx::createShader(bgfx::makeRef(vertex_universe, sizeof(vertex_universe)));
@@ -34,17 +34,17 @@ int UI::InitializeRenderer() {
     }
 
     // temp
-    struct ColorVertex  { float r, g, b, a; };
-    std::vector<ColorVertex> colors(4, {1.0f, 1.0f, 0.0f, 1.0f});
+    struct DummyVertex  { float x, y, z; };
+    DummyVertex vert = {0.0f, 0.0f, 0.0f};
 
-    bgfx::VertexLayout colorLayout;
-    colorLayout.begin()
-        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Float)
+    bgfx::VertexLayout dummyLayout;
+    dummyLayout.begin()
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
         .end();
-    colorLayoutHandle = bgfx::createVertexLayout(colorLayout);
+    dummyLayoutHandle = bgfx::createVertexLayout(dummyLayout);
 
-    colorBuffer = bgfx::createVertexBuffer(
-        bgfx::copy(colors.data(), colors.size() * sizeof(ColorVertex)), colorLayout);
+    dummyBuffer = bgfx::createVertexBuffer(
+        bgfx::copy(&vert, sizeof(DummyVertex)), dummyLayout);
 
     CreateQuadGeometry();
 
@@ -116,8 +116,9 @@ void UI::RenderScene() {
 
 
     // set vertex buffer
-    bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old, 0, Simulation::Entities.size(), GPU::VertexLayoutHandle);
-    bgfx::setVertexBuffer(1, colorBuffer, 0, Simulation::Entities.size(), colorLayoutHandle);
+    //bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old, 0, Simulation::Entities.size(), GPU::VertexLayoutHandle);
+    bgfx::setVertexBuffer(0, dummyBuffer);
+    bgfx::setInstanceDataBuffer(GPU::PositionsBuffer_Old, 0, Simulation::Entities.size());
 
     // set viewproj uniform
     glm::mat4 projmat = GetProjectionMatrix();

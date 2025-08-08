@@ -28,7 +28,7 @@ int Simulation::StartSimulation() {
     if (status != 0) return status;
     QueueNewEntity(glm::vec3{1.0f, 1.0f, 1.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
     QueueNewEntity(glm::vec3{0.5f, 0.5f, 0.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
-    //QueueNewEntity(glm::vec3{10.0f, 0.0f, 0.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
+    QueueNewEntity(glm::vec3{0.0f, 0.0f, -2.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
     //QueueNewEntity(glm::vec3{0.0f, 10.0f, 0.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
 
     RunMainThread();
