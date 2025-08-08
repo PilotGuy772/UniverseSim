@@ -18,6 +18,7 @@
 #endif
 
 inline bgfx::VertexBufferHandle dummyBuffer;
+inline bgfx::IndexBufferHandle dummyIndexBuffer;
 inline bgfx::VertexLayoutHandle dummyLayoutHandle;
 
 int UI::InitializeRenderer() {
@@ -34,8 +35,14 @@ int UI::InitializeRenderer() {
     }
 
     // temp
-    struct DummyVertex  { float x, y, z; };
-    DummyVertex vert = {0.0f, 0.0f, 0.0f};
+    struct GeomVertex  { float x, y, z; };
+    GeomVertex triangle[] = {
+    {-0.5f, -0.5f, 0.0f},
+    {0.5f, -0.5f, 0.0f},
+    {0.0f, 0.5f, 0.0f}
+    };
+
+    uint16_t indices[] = {0, 1, 2};
 
     bgfx::VertexLayout dummyLayout;
     dummyLayout.begin()
@@ -44,7 +51,8 @@ int UI::InitializeRenderer() {
     dummyLayoutHandle = bgfx::createVertexLayout(dummyLayout);
 
     dummyBuffer = bgfx::createVertexBuffer(
-        bgfx::copy(&vert, sizeof(DummyVertex)), dummyLayout);
+        bgfx::copy(triangle, sizeof(triangle)), dummyLayout);
+    dummyIndexBuffer = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
     CreateQuadGeometry();
 
@@ -118,6 +126,7 @@ void UI::RenderScene() {
     // set vertex buffer
     //bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old, 0, Simulation::Entities.size(), GPU::VertexLayoutHandle);
     bgfx::setVertexBuffer(0, dummyBuffer);
+    bgfx::setIndexBuffer(dummyIndexBuffer);
     bgfx::setInstanceDataBuffer(GPU::PositionsBuffer_Old, 0, Simulation::Entities.size());
 
     // set viewproj uniform
@@ -132,7 +141,7 @@ void UI::RenderScene() {
 
 
     // set state
-    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_POINTS);
+    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z);
 
     // draw!
     bgfx::submit(Core::VIEW_ID_MAIN, ShaderProgram);
