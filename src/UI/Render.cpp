@@ -35,24 +35,24 @@ int UI::InitializeRenderer() {
     }
 
     // temp
-    struct GeomVertex  { float x, y, z; };
-    GeomVertex triangle[] = {
-    {-0.5f, -0.5f, 0.0f},
-    {0.5f, -0.5f, 0.0f},
-    {0.0f, 0.5f, 0.0f}
-    };
-
-    uint16_t indices[] = {0, 1, 2};
-
-    bgfx::VertexLayout dummyLayout;
-    dummyLayout.begin()
-        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-        .end();
-    dummyLayoutHandle = bgfx::createVertexLayout(dummyLayout);
-
-    dummyBuffer = bgfx::createVertexBuffer(
-        bgfx::copy(triangle, sizeof(triangle)), dummyLayout);
-    dummyIndexBuffer = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+    // struct GeomVertex  { float x, y, z; };
+    // GeomVertex triangle[] = {
+    // {-0.5f, -0.5f, 0.0f},
+    // {0.5f, -0.5f, 0.0f},
+    // {0.0f, 0.5f, 0.0f}
+    // };
+    //
+    // uint16_t indices[] = {0, 1, 2};
+    //
+    // bgfx::VertexLayout dummyLayout;
+    // dummyLayout.begin()
+    //     .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+    //     .end();
+    // dummyLayoutHandle = bgfx::createVertexLayout(dummyLayout);
+    //
+    // dummyBuffer = bgfx::createVertexBuffer(
+    //     bgfx::copy(triangle, sizeof(triangle)), dummyLayout);
+    // dummyIndexBuffer = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
     CreateQuadGeometry();
 
@@ -68,18 +68,18 @@ int UI::InitializeRenderer() {
 void UI::CreateQuadGeometry() {
     struct QuadVertex {
         float x, y, z;
-        float u, v;
+        //float u, v;
     };
 
     QuadVertex vertices[] = {
-        {-1.0f,  1.0f,  1.0f, 0.0f, 0.0f },
-        { 1.0f,  1.0f,  1.0f, 0.0f, 0.0f },
-        {-1.0f, -1.0f,  1.0f, 0.0f, 0.0f },
-        { 1.0f, -1.0f,  1.0f, 0.0f, 0.0f },
-        {-1.0f,  1.0f, -1.0f, 0.0f, 0.0f },
-        { 1.0f,  1.0f, -1.0f, 0.0f, 0.0f },
-        {-1.0f, -1.0f, -1.0f, 0.0f, 0.0f },
-        { 1.0f, -1.0f, -1.0f, 0.0f, 0.0f },
+        {-1.0f,  1.0f,  1.0f},
+        { 1.0f,  1.0f,  1.0f},
+        {-1.0f, -1.0f,  1.0f},
+        { 1.0f, -1.0f,  1.0f},
+        {-1.0f,  1.0f, -1.0f},
+        { 1.0f,  1.0f, -1.0f},
+        {-1.0f, -1.0f, -1.0f},
+        { 1.0f, -1.0f, -1.0f},
     };
 
     uint16_t indices[] = {
@@ -100,11 +100,11 @@ void UI::CreateQuadGeometry() {
     bgfx::VertexLayout quadLayout;
     quadLayout.begin()
         .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+        //.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
         .end();
 
-    QuadVB = bgfx::createVertexBuffer(bgfx::makeRef(vertices, sizeof(vertices)), quadLayout);
-    QuadIB = bgfx::createIndexBuffer(bgfx::makeRef(indices, sizeof(indices)));
+    QuadVB = bgfx::createVertexBuffer(bgfx::copy(vertices, sizeof(vertices)), quadLayout);
+    QuadIB = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 }
 
 void Mat4ToFloatArray(const glm::mat4& mat, float out[16]) {
@@ -118,15 +118,15 @@ void Mat4ToFloatArray(const glm::mat4& mat, float out[16]) {
 
 void UI::RenderScene() {
     // Set quad geometry
-    //bgfx::setVertexBuffer(0, QuadVB);
-    //bgfx::setIndexBuffer(QuadIB);
+    bgfx::setVertexBuffer(0, QuadVB);
+    bgfx::setIndexBuffer(QuadIB);
 
 
 
     // set vertex buffer
     //bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old, 0, Simulation::Entities.size(), GPU::VertexLayoutHandle);
-    bgfx::setVertexBuffer(0, dummyBuffer);
-    bgfx::setIndexBuffer(dummyIndexBuffer);
+    //bgfx::setVertexBuffer(0, dummyBuffer);
+    //bgfx::setIndexBuffer(dummyIndexBuffer);
     bgfx::setInstanceDataBuffer(GPU::PositionsBuffer_Old, 0, Simulation::Entities.size());
 
     // set viewproj uniform
