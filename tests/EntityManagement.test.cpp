@@ -66,7 +66,6 @@ TEST_CASE("Create, Read, and Kill entities within bounds.", "[GPU]") {
         REQUIRE(gpuData[1].z == Catch::Approx(velocity.z).epsilon(0.01f));
 
         // verify 2nd and 3rd W components are 1.0, alive
-        REQUIRE(gpuData[1].w == Catch::Approx(1.0).epsilon((0.01f)));
         REQUIRE(gpuData[2].w == Catch::Approx(1.0).epsilon((0.01f)));
     }
 

@@ -20,10 +20,11 @@ void GPU::InitBuffers(uint32_t size) {
 
     VertexLayout = bgfx::VertexLayout();
     VertexLayout.begin()
-        .add(bgfx::Attrib::TexCoord1, 4, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord1, 1, bgfx::AttribType::Float)
         .end();
+    VertexLayoutHandle = bgfx::createVertexLayout(VertexLayout);
 
-    //add(bgfx::Attrib::TexCoord1, 1, bgfx::AttribType::Float)
 
     PositionsBuffer_Old = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
     PositionsBuffer_New = bgfx::createDynamicVertexBuffer(size, VertexLayout, BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE);
@@ -49,6 +50,7 @@ void GPU::InitBuffers(uint32_t size) {
 }
 
 void GPU::AddEntity(const uint32_t index, glm::vec4 position_mass, glm::vec4 velocity, uint32_t flags) {
+    std::cout << "Adding entity to index " << index << std::endl;
     if (index >= BufferSize) {
         std::cerr << "Error: Index out of bounds for GPU buffers." << std::endl;
         return;

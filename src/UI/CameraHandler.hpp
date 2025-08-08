@@ -18,7 +18,7 @@ namespace UI {
     inline int MouseX = 0;
     inline int MouseY = 0;
 
-    inline float CameraMoveSpeed = 0.01f;
+    inline float CameraMoveSpeed = 0.1f;
     inline float CameraRotationSensitivity = 0.25f;
 
     // SDL event handling

@@ -18,6 +18,7 @@ namespace GPU {
     inline bgfx::DynamicVertexBufferHandle AccelerationsBuffer_New;
     inline bgfx::DynamicVertexBufferHandle BitmaskBuffer;
     inline bgfx::VertexLayout VertexLayout;
+    inline bgfx::VertexLayoutHandle VertexLayoutHandle;
     inline uint32_t BufferSize = 0; // size of the GPU buffers
 
     // single-value buffers for delta-t and numParticles

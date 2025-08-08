@@ -34,7 +34,7 @@ void Simulation::KillNextEntityFromQueue() {
 }
 
 int Simulation::AddNextEntityFromQueue() {
-    if (GpuIndices.size() < 1) return -1;
+    if (GpuIndices.empty()) return -1;
 
     NewEntity newEntity = EntityQueue.front();
     EntityQueue.pop();

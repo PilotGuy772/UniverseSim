@@ -13,6 +13,7 @@
 #include "../UI/Render.hpp"
 #include "bgfx/platform.h"
 #include "SDL3/SDL_events.h"
+#include "SDL3/SDL_init.h"
 #include "SDL3/SDL_timer.h"
 
 int Simulation::StartSimulation() {
@@ -25,8 +26,10 @@ int Simulation::StartSimulation() {
     InitializeEntities(Core::STARTING_BUFFER_SIZE);
     status = UI::InitializeRenderer();
     if (status != 0) return status;
-    QueueNewEntity(glm::vec3{0.0f, 0.0f, -10.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
-    //QueueNewEntity(glm::vec3{0.0f, 0.0f, 0.0f}, 1.0f, glm::vec3(0.0f), 1 << 0);
+    QueueNewEntity(glm::vec3{1.0f, 1.0f, 1.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
+    QueueNewEntity(glm::vec3{0.5f, 0.5f, 0.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
+    //QueueNewEntity(glm::vec3{10.0f, 0.0f, 0.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
+    //QueueNewEntity(glm::vec3{0.0f, 10.0f, 0.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
 
     RunMainThread();
     return 0;
@@ -64,20 +67,21 @@ void Simulation::RunMainThread() {
         }
 
         // dispatch position
-        GPU::DispatchVerletPosition(deltaTime);
-        //
-        // // dispatch gravity
-        GPU::DispatchGravity();
-        //
-        // // dispatch velocity
-        GPU::DispatchVerletVelocity(deltaTime);
+        // GPU::DispatchVerletPosition(deltaTime);
+        // //
+        // // // dispatch gravity
+        // GPU::DispatchGravity();
+        // //
+        // // // dispatch velocity
+        // GPU::DispatchVerletVelocity(deltaTime);
 
         // check for adding new entities
         bool resizeBuffersAfterFrame = false;
-        if (EntityQueue.size() > 0) {
+        while (!EntityQueue.empty()) {
             int result = AddNextEntityFromQueue();
             if (result < 0) {
                 resizeBuffersAfterFrame = true;
+                break;
             }
         }
 
@@ -99,5 +103,44 @@ void Simulation::RunMainThread() {
     }
 
     std::cout << "App exiting gracefully..." << std::endl;
+
+    // destroy everything
+
+    // buffers
+    bgfx::destroy(GPU::PositionsBuffer_New);
+    bgfx::destroy(GPU::PositionsBuffer_Old);
+    bgfx::destroy(GPU::VelocitiesBuffer_New);
+    bgfx::destroy(GPU::VelocitiesBuffer_Old);
+    bgfx::destroy(GPU::AccelerationsBuffer_New);
+    bgfx::destroy(GPU::AccelerationsBuffer_Old);
+    bgfx::destroy(GPU::BitmaskBuffer);
+    // programs & shaders
+    bgfx::destroy(GPU::computeBufferCopierProgram);
+    bgfx::destroy(GPU::computeBufferCopierShader);
+    bgfx::destroy(GPU::computeEntityAdderHandle);
+    bgfx::destroy(GPU::computeEntityAdderProgram);
+    bgfx::destroy(GPU::computeReadbackSingleProgram);
+    bgfx::destroy(GPU::computeReadbackSingleShader);
+    bgfx::destroy(GPU::computeVerletPositionProgram);
+    bgfx::destroy(GPU::computeVerletPositionShader);
+    bgfx::destroy(GPU::computeVerletVelocityProgram);
+    bgfx::destroy(GPU::computeVerletVelocityShader);
+    bgfx::destroy(GPU::computeGravityProgram);
+    bgfx::destroy(GPU::computeGravityShader);
+    bgfx::destroy(UI::ShaderProgram);
+    // uniforms
+    bgfx::destroy(GPU::u_deltaTime);
+    bgfx::destroy(GPU::u_index);
+    bgfx::destroy(GPU::u_numParticles);
+    bgfx::destroy(GPU::u_position);
+    bgfx::destroy(GPU::u_velocity);
+    //textures
+    bgfx::destroy(GPU::ReadbackSingleEntityTexture);
+    bgfx::destroy(GPU::WritableSingleEntityTexture);
+    // misc
+    bgfx::destroy(GPU::VertexLayoutHandle);
+
+    bgfx::shutdown();
+    SDL_Quit();
 }
 

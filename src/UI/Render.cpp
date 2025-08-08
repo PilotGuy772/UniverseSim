@@ -17,6 +17,9 @@
 #include <metal/fragment_universe.bin.h>
 #endif
 
+inline bgfx::VertexBufferHandle colorBuffer;
+inline bgfx::VertexLayoutHandle colorLayoutHandle;
+
 int UI::InitializeRenderer() {
     const bgfx::ShaderHandle vs = bgfx::createShader(bgfx::makeRef(vertex_universe, sizeof(vertex_universe)));
     const bgfx::ShaderHandle fs = bgfx::createShader(bgfx::makeRef(fragment_universe, sizeof(fragment_universe)));
@@ -29,6 +32,19 @@ int UI::InitializeRenderer() {
         std::cerr << "Error creating shader program" << std::endl;
         return 1;
     }
+
+    // temp
+    struct ColorVertex  { float r, g, b, a; };
+    std::vector<ColorVertex> colors(4, {1.0f, 1.0f, 0.0f, 1.0f});
+
+    bgfx::VertexLayout colorLayout;
+    colorLayout.begin()
+        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Float)
+        .end();
+    colorLayoutHandle = bgfx::createVertexLayout(colorLayout);
+
+    colorBuffer = bgfx::createVertexBuffer(
+        bgfx::copy(colors.data(), colors.size() * sizeof(ColorVertex)), colorLayout);
 
     CreateQuadGeometry();
 
@@ -83,22 +99,39 @@ void UI::CreateQuadGeometry() {
     QuadIB = bgfx::createIndexBuffer(bgfx::makeRef(indices, sizeof(indices)));
 }
 
+void Mat4ToFloatArray(const glm::mat4& mat, float out[16]) {
+    // GLM stores mat4 in column-major by default, so we can copy directly
+    for (int col = 0; col < 4; ++col) {
+        for (int row = 0; row < 4; ++row) {
+            out[col * 4 + row] = mat[col][row];
+        }
+    }
+}
+
 void UI::RenderScene() {
     // Set quad geometry
-    bgfx::setVertexBuffer(0, QuadVB);
-    bgfx::setIndexBuffer(QuadIB);
+    //bgfx::setVertexBuffer(0, QuadVB);
+    //bgfx::setIndexBuffer(QuadIB);
+
+
 
     // set vertex buffer
-    bgfx::setInstanceDataBuffer(GPU::PositionsBuffer_Old, 0, Simulation::Entities.size());
+    bgfx::setVertexBuffer(0, GPU::PositionsBuffer_Old, 0, Simulation::Entities.size(), GPU::VertexLayoutHandle);
+    bgfx::setVertexBuffer(1, colorBuffer, 0, Simulation::Entities.size(), colorLayoutHandle);
 
     // set viewproj uniform
     glm::mat4 projmat = GetProjectionMatrix();
     glm::mat4 viewmat = GetViewMatrix();
+    /*float projmat[16];
+    Mat4ToFloatArray(GetProjectionMatrix(), projmat);
+    float viewmat[16];
+    Mat4ToFloatArray(GetViewMatrix(), viewmat);*/
 
-    bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat[0][0], &projmat[0][0]);
+    bgfx::setViewTransform(Core::VIEW_ID_MAIN, &viewmat, &projmat);
+
 
     // set state
-    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_LINES);
+    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_Z | BGFX_STATE_PT_POINTS);
 
     // draw!
     bgfx::submit(Core::VIEW_ID_MAIN, ShaderProgram);
