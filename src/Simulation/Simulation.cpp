@@ -53,7 +53,7 @@ void Simulation::RunMainThread() {
 
     while (running) {
         // reset stopwatch for deltaTime
-        const float deltaTime = Stopwatch.elapsed<stopwatch::seconds>();
+        const float deltaTime = Stopwatch.elapsed<stopwatch::microseconds>() / 1e6f;
         Stopwatch.start();
 
         // check SDL events
@@ -65,6 +65,9 @@ void Simulation::RunMainThread() {
             UI::HandleKeyboardEvent(event);
             UI::HandleMouseEvent(event);
         }
+
+        UI::ProcessCameraMovement(deltaTime);
+        UI::ProcessInputs();
 
         // dispatch position
         // GPU::DispatchVerletPosition(deltaTime);

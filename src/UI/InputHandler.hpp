@@ -5,12 +5,13 @@
 #ifndef INPUTHANDLER_HPP
 #define INPUTHANDLER_HPP
 #include <unordered_map>
+#include <vector>
 
 #include "glm/gtc/constants.hpp"
 #include "SDL3/SDL_events.h"
 
 namespace UI {
-    enum Keybind {
+    enum class Keybind : uint8_t {
         KEY_FORWARD,
         KEY_BACK,
         KEY_LEFT,
@@ -19,20 +20,26 @@ namespace UI {
         KEY_MENU,
         KEY_UP,
         KEY_DOWN,
+        COUNT,
         // more as needed
     };
-    inline std::unordered_map<Keybind, SDL_Keycode> Keybindings = {
-        {KEY_FORWARD, SDLK_W},
-        {KEY_BACK, SDLK_S},
-        {KEY_LEFT, SDLK_A},
-        {KEY_RIGHT, SDLK_D},
-        {KEY_LOCK_VIEW, SDLK_SPACE},
-        {KEY_MENU, SDLK_ESCAPE},
-        {KEY_UP, SDLK_LSHIFT},
-        {KEY_DOWN, SDLK_LCTRL},
+    inline std::unordered_map<SDL_Keycode, Keybind> Keybindings = {
+    {SDLK_W, Keybind::KEY_FORWARD},
+    {SDLK_S, Keybind::KEY_BACK},
+    {SDLK_A, Keybind::KEY_LEFT},
+    {SDLK_D, Keybind::KEY_RIGHT},
+    {SDLK_SPACE, Keybind::KEY_LOCK_VIEW},
+    {SDLK_ESCAPE, Keybind::KEY_MENU},
+    {SDLK_LSHIFT, Keybind::KEY_UP},
+    {SDLK_LCTRL, Keybind::KEY_DOWN},
     };
+    inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMask = {};
+    inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMaskThisFrame = {};
 
-    void HandleKeyboardEvent(SDL_Event& event);
+    void HandleKeyboardEvent(const SDL_Event &event);
+    bool KeyPressed(Keybind bind);
+    bool KeyPressedThisFrame(Keybind bind);
+    void ProcessInputs();
 }
 
 #endif //INPUTHANDLER_HPP

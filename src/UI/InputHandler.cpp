@@ -8,34 +8,40 @@
 
 #include "CameraHandler.hpp"
 
-void UI::HandleKeyboardEvent(SDL_Event &event) {
+void UI::HandleKeyboardEvent(const SDL_Event &event) {
+    if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
+    if (event.key.repeat != 0) return; // Ignore key repeat
+
+    const auto it = Keybindings.find(event.key.key);
+    if (it == Keybindings.end()) return;
+
+    Keybind bind = it->second;
+    const auto idx = static_cast<size_t>(bind);
+
     if (event.type == SDL_EVENT_KEY_DOWN) {
-        if (event.key.key == Keybindings[KEY_FORWARD]) {
-            CameraPosition += GetForwardVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
+        if (!KeybindingsMask[idx]) {
+            KeybindingsMaskThisFrame[idx] = true;
         }
-        else if (event.key.key == Keybindings[KEY_BACK]) {
-            CameraPosition -= GetForwardVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
-        }
-        else if (event.key.key == Keybindings[KEY_LEFT]) {
-            CameraPosition -= GetRightVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
-        }
-        else if (event.key.key == Keybindings[KEY_RIGHT]) {
-            CameraPosition += GetRightVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
-        }
-        else if (event.key.key == Keybindings[KEY_UP]) {
-            CameraPosition += GetUpVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
-        }
-        else if (event.key.key == Keybindings[KEY_DOWN]) {
-            CameraPosition -= GetUpVector() * CameraMoveSpeed;
-            std::cout << "Moved camera, new position: (" << CameraPosition.x << ", " << CameraPosition.y << ", " << CameraPosition.z << ")" << std::endl;
-        }
-        else if (event.key.key == Keybindings[KEY_LOCK_VIEW]) {
-            SetMouseLocked(!MouseLocked);
-        }
+        KeybindingsMask[idx] = true;
+    }
+    else if (event.type == SDL_EVENT_KEY_UP) {
+        KeybindingsMask[idx] = false;
     }
 }
+
+void UI::ProcessInputs() {
+    if (KeyPressedThisFrame(Keybind::KEY_LOCK_VIEW)) {
+        SetMouseLocked(!MouseLocked);
+    }
+    KeybindingsMaskThisFrame.fill(false);
+}
+
+
+bool UI::KeyPressed(Keybind bind) {
+    return KeybindingsMask[static_cast<size_t>(bind)];
+}
+
+bool UI::KeyPressedThisFrame(Keybind bind) {
+    return KeybindingsMaskThisFrame[static_cast<size_t>(bind)];
+}
+

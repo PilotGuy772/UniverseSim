@@ -13,12 +13,14 @@
 namespace UI {
     inline glm::vec3 CameraPosition{0.0f, 0.0f, 0.0f};
     inline glm::quat CameraOrientation{0.0f, 0.0f, 0.0f, 1.0f};
+    inline float CameraPitch = 0.0f;
+    inline float CameraYaw = 0.0f;
 
     inline bool MouseLocked = false;
     inline int MouseX = 0;
     inline int MouseY = 0;
 
-    inline float CameraMoveSpeed = 0.1f;
+    inline float CameraMoveSpeed = 1.0f;
     inline float CameraRotationSensitivity = 0.25f;
 
     // SDL event handling
@@ -26,6 +28,7 @@ namespace UI {
     void HandleMouseEvent(const SDL_Event& event);
     void HandleMouseMotion(float dx, float dy);
     void HandleMouseWheel(float delta);
+    void ProcessCameraMovement(float deltaTime);
 
     // Camera rotation
     void RotateCamera(float pitch, float yaw);

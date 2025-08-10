@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "InputHandler.hpp"
 #include "../Core/Application.hpp"
 #include "../Core/ApplicationConfig.hpp"
 
@@ -54,7 +55,30 @@ void UI::HandleMouseMotion(float dx, float dy) {
 void UI::HandleMouseWheel(float delta) {
     if (!MouseLocked) return;
 
-    CameraPosition += GetForwardVector() * delta * CameraMoveSpeed;
+    // wheelDelta > 0 for scroll up, < 0 for scroll down
+    const float baseFactor = 1.05f; // 10% change per tick
+    CameraMoveSpeed *= std::pow(baseFactor, -delta);
+}
+
+void UI::ProcessCameraMovement(float deltaTime) {
+    if (KeyPressed(Keybind::KEY_FORWARD)) {
+        CameraPosition += GetForwardVector() * CameraMoveSpeed * deltaTime;
+    }
+    if (KeyPressed(Keybind::KEY_BACK)) {
+        CameraPosition -= GetForwardVector() * CameraMoveSpeed * deltaTime;
+    }
+    if (KeyPressed(Keybind::KEY_LEFT)) {
+        CameraPosition -= GetRightVector() * CameraMoveSpeed * deltaTime;
+    }
+    if (KeyPressed(Keybind::KEY_RIGHT)) {
+        CameraPosition += GetRightVector() * CameraMoveSpeed * deltaTime;
+    }
+    if (KeyPressed(Keybind::KEY_UP)) {
+        CameraPosition += GetUpVector() * CameraMoveSpeed * deltaTime;
+    }
+    if (KeyPressed(Keybind::KEY_DOWN)) {
+        CameraPosition -= GetUpVector() * CameraMoveSpeed * deltaTime;
+    }
 }
 
 void UI::RotateCamera(float pitch, float yaw) {
@@ -67,7 +91,12 @@ void UI::RotateCamera(float pitch, float yaw) {
     CameraOrientation = pitchRot * CameraOrientation;
     CameraOrientation = glm::normalize(CameraOrientation);
 
-    std::cout << "Moved camera, new orientation: (" << CameraOrientation.x << ", " << CameraOrientation.y << ", " << CameraOrientation.z << ", " << CameraOrientation.w << ")" << std::endl;
+    glm::vec3 forward = GetForwardVector();
+              right   = glm::normalize(glm::cross(glm::vec3(0,-1,0), forward));
+    glm::vec3 up      = glm::normalize(glm::cross(forward, right));
+
+    CameraOrientation = glm::quatLookAt(forward, up);
+
 }
 
 glm::vec3 UI::GetUpVector() {
