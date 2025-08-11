@@ -20,6 +20,7 @@ namespace UI {
         KEY_MENU,
         KEY_UP,
         KEY_DOWN,
+        KEY_PAUSE,
         COUNT,
         // more as needed
     };
@@ -32,6 +33,7 @@ namespace UI {
     {SDLK_ESCAPE, Keybind::KEY_MENU},
     {SDLK_LSHIFT, Keybind::KEY_UP},
     {SDLK_LCTRL, Keybind::KEY_DOWN},
+    {SDLK_P, Keybind::KEY_PAUSE},
     };
     inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMask = {};
     inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMaskThisFrame = {};

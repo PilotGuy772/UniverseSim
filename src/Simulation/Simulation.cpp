@@ -26,9 +26,9 @@ int Simulation::StartSimulation() {
     InitializeEntities(Core::STARTING_BUFFER_SIZE);
     status = UI::InitializeRenderer();
     if (status != 0) return status;
-    QueueNewEntity(glm::vec3{1.0f, 1.0f, 1.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
-    QueueNewEntity(glm::vec3{0.5f, 0.5f, 0.0f}, 100.0f, glm::vec3(1.0f), 1 << 0);
-    QueueNewEntity(glm::vec3{0.0f, 0.0f, -2.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
+    QueueNewEntity(glm::vec3{1000.0f, 10.0f, 10.0f}, 10.0f, glm::vec3(0.0f), 1 << 0);
+    QueueNewEntity(glm::vec3{1.0f, 0.5f, 0.0f}, 10.0f, glm::vec3(0.0f), 1 << 0);
+    //QueueNewEntity(glm::vec3{0.0f, 0.0f, -2.0f}, 1000.0f, glm::vec3(0.0f), 1 << 0);
     //QueueNewEntity(glm::vec3{0.0f, 10.0f, 0.0f}, 100.0f, glm::vec3(0.0f), 1 << 0);
 
     RunMainThread();
@@ -69,14 +69,14 @@ void Simulation::RunMainThread() {
         UI::ProcessCameraMovement(deltaTime);
         UI::ProcessInputs();
 
-        // dispatch position
-        // GPU::DispatchVerletPosition(deltaTime);
-        // //
-        // // // dispatch gravity
-        // GPU::DispatchGravity();
-        // //
-        // // // dispatch velocity
-        // GPU::DispatchVerletVelocity(deltaTime);
+        if (RunSimulation) {
+            // dispatch position
+            GPU::DispatchVerletPosition(deltaTime);
+            // dispatch gravity
+            GPU::DispatchGravity();
+            // dispatch velocity
+            GPU::DispatchVerletVelocity(deltaTime);
+        }
 
         // check for adding new entities
         bool resizeBuffersAfterFrame = false;
@@ -99,8 +99,10 @@ void Simulation::RunMainThread() {
         // frame!
         bgfx::frame();
 
+        
+
         // swap buffers
-        //GPU::SwapBuffers();
+        if (RunSimulation) GPU::SwapBuffers();
 
         if (resizeBuffersAfterFrame) GPU::ResizeBuffers();
     }

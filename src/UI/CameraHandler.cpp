@@ -122,7 +122,7 @@ glm::mat4 UI::GetProjectionMatrix() {
     float fov = glm::radians(45.0f); // Field of view in radians
     float aspectRatio = static_cast<float>(Core::DEFAULT_WIDTH) / static_cast<float>(Core::DEFAULT_HEIGHT);
     float nearPlane = 0.1f;
-    float farPlane = 100.0f;
+    float farPlane = 1000000.0f;
 
     return glm::perspective(fov, aspectRatio, nearPlane, farPlane);
 }

@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "CameraHandler.hpp"
+#include "../Simulation/Simulation.hpp"
 
 void UI::HandleKeyboardEvent(const SDL_Event &event) {
     if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
@@ -32,6 +33,9 @@ void UI::HandleKeyboardEvent(const SDL_Event &event) {
 void UI::ProcessInputs() {
     if (KeyPressedThisFrame(Keybind::KEY_LOCK_VIEW)) {
         SetMouseLocked(!MouseLocked);
+    }
+    if (KeyPressedThisFrame(Keybind::KEY_PAUSE)) {
+        Simulation::RunSimulation = !Simulation::RunSimulation;
     }
     KeybindingsMaskThisFrame.fill(false);
 }
