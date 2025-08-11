@@ -12,6 +12,7 @@ namespace Simulation {
     inline stopwatch::Stopwatch Stopwatch;
     inline glm::vec3 CameraPosition{0.0f, 0.0f, 0.0f};
     inline bool RunSimulation = false;
+    inline float DeltaTime = 0.0f;
 
 
     /**

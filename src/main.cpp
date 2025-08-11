@@ -5,6 +5,7 @@
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_metal.h"
 #define BGFX_CONFIG_MULTITHREADED 0
+#define BX_CONFIG_DEBUG 1
 
 int main() {
     //std::cout << "Hello, World!" << std::endl;

@@ -39,14 +39,14 @@ FetchContent_Declare(
         GIT_TAG bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
 )
 
-#FetchContent_Declare(
-#        stopwatch
-#        GIT_REPOSITORY https://github.com/ManWithABike/Stopwatch
-#        GIT_TAG fe927014b8ee0e0cbfc19f593b4bcb9f6d62c958
-#)
+FetchContent_Declare(
+        imgui
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG v1.92.1
+)
 
 FetchContent_MakeAvailable(glm)
-#FetchContent_MakeAvailable(stopwatch)
+FetchContent_MakeAvailable(imgui)
 FetchContent_MakeAvailable(SDL3)
 FetchContent_MakeAvailable(bgfx.cmake)
 
@@ -150,6 +150,8 @@ add_library(UniverseSim_lib
         src/UI/CameraHandler.hpp
         src/UI/Render.cpp
         src/UI/Render.hpp
+        src/UI/GUI.cpp
+        src/UI/GUI.hpp
 )
 
 add_executable(UniverseSim src/main.cpp)
@@ -165,11 +167,34 @@ target_include_directories(UniverseSim_lib PUBLIC
         ${bgfx.cmake_SOURCE_DIR}/bx/include
         ${bgfx.cmake_SOURCE_DIR}/bimg/include
         ${glm_SOURCE_DIR}
-#        ${stopwatch_SOURCE_DIR}/include
+#        ${imgui_SOURCE_DIR}
         ${SHADER_OUTPUT_BASE_DIR}
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/examples/common
 )
 
-target_link_libraries(UniverseSim_lib PUBLIC SDL3::SDL3 bgfx bimg bx glm::glm)
+add_library(imgui STATIC
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty/dear-imgui/imgui.cpp
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty/dear-imgui/imgui_demo.cpp
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty/dear-imgui/imgui_draw.cpp
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty/dear-imgui/imgui_widgets.cpp
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty/dear-imgui/imgui_tables.cpp
+)
+target_include_directories(imgui PUBLIC ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty ${bgfx.cmake_SOURCE_DIR}/bx/include)
+target_compile_definitions(imgui PRIVATE BX_CONFIG_DEBUG=1)
+
+add_library(imgui_connector STATIC
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/examples/common/imgui/imgui.cpp
+)
+target_include_directories(imgui_connector PUBLIC
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/include
+        ${bgfx.cmake_SOURCE_DIR}/bx/include
+        ${bgfx.cmake_SOURCE_DIR}/bimg/include
+        ${bgfx.cmake_SOURCE_DIR}/bgfx/3rdparty
+)
+target_compile_definitions(imgui_connector PRIVATE BX_CONFIG_DEBUG=1)
+
+target_link_libraries(UniverseSim_lib PUBLIC SDL3::SDL3 bgfx bimg bx glm::glm imgui imgui_connector)
 target_link_libraries(UniverseSim PRIVATE UniverseSim_lib)
 
 ###########################

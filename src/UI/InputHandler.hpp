@@ -24,6 +24,12 @@ namespace UI {
         COUNT,
         // more as needed
     };
+    enum class MouseButton : uint8_t {
+        MOUSE_LEFT,
+        MOUSE_MIDDLE,
+        MOUSE_RIGHT,
+        COUNT,
+    };
     inline std::unordered_map<SDL_Keycode, Keybind> Keybindings = {
     {SDLK_W, Keybind::KEY_FORWARD},
     {SDLK_S, Keybind::KEY_BACK},
@@ -37,11 +43,13 @@ namespace UI {
     };
     inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMask = {};
     inline std::array<bool, static_cast<size_t>(Keybind::COUNT)> KeybindingsMaskThisFrame = {};
+    inline std::array<bool, static_cast<size_t>(MouseButton::COUNT)> MouseButtonsMask = {};
 
     void HandleKeyboardEvent(const SDL_Event &event);
     bool KeyPressed(Keybind bind);
     bool KeyPressedThisFrame(Keybind bind);
     void ProcessInputs();
+    bool MouseButtonPressed(MouseButton bind);
 }
 
 #endif //INPUTHANDLER_HPP

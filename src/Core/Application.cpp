@@ -8,6 +8,8 @@
 #include <iostream>
 #include "ApplicationConfig.hpp"
 #include <bgfx/platform.h>
+#include <dear-imgui/imgui.h>
+#include <imgui/imgui.h>
 
 int Core::Init() {
 #if defined(__linux__)
@@ -129,6 +131,13 @@ int Core::Init() {
 
     // Also check OpenGL version being used
     std::cout << "Renderer: " << bgfx::getRendererName(bgfx::getRendererType()) << std::endl;
+
+    // Initialize Dear ImGui
+    // ImGui::CreateContext();
+    // ImGuiIO& io = ImGui::GetIO();
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    imguiCreate();
 
     // Init complete
     return 0;

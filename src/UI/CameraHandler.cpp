@@ -36,7 +36,8 @@ void UI::HandleMouseEvent(const SDL_Event& event) {
             }
             break;
         case SDL_EVENT_MOUSE_WHEEL:
-            HandleMouseWheel(static_cast<float>(event.wheel.y));
+            MouseWheelThisFrame = event.wheel.y;
+            HandleMouseWheel(MouseWheelThisFrame);
             break;
         default:
             break;

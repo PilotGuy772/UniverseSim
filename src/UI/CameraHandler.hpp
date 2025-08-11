@@ -19,6 +19,7 @@ namespace UI {
     inline bool MouseLocked = false;
     inline int MouseX = 0;
     inline int MouseY = 0;
+    inline float MouseWheelThisFrame = 0.0f;
 
     inline float CameraMoveSpeed = 1.0f;
     inline float CameraRotationSensitivity = 0.25f;

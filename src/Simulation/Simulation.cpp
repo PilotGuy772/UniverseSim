@@ -9,9 +9,11 @@
 #include "../GPU/BufferManager.hpp"
 #include "../GPU/ComputeBridge.hpp"
 #include "../UI/CameraHandler.hpp"
+#include "../UI/GUI.hpp"
 #include "../UI/InputHandler.hpp"
 #include "../UI/Render.hpp"
 #include "bgfx/platform.h"
+#include "imgui/imgui.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_timer.h"
@@ -53,7 +55,7 @@ void Simulation::RunMainThread() {
 
     while (running) {
         // reset stopwatch for deltaTime
-        const float deltaTime = Stopwatch.elapsed<stopwatch::microseconds>() / 1e6f;
+        DeltaTime = Stopwatch.elapsed<stopwatch::microseconds>() / 1e6f;
         Stopwatch.start();
 
         // check SDL events
@@ -66,16 +68,16 @@ void Simulation::RunMainThread() {
             UI::HandleMouseEvent(event);
         }
 
-        UI::ProcessCameraMovement(deltaTime);
+        UI::ProcessCameraMovement(DeltaTime);
         UI::ProcessInputs();
 
         if (RunSimulation) {
             // dispatch position
-            GPU::DispatchVerletPosition(deltaTime);
+            GPU::DispatchVerletPosition(DeltaTime);
             // dispatch gravity
             GPU::DispatchGravity();
             // dispatch velocity
-            GPU::DispatchVerletVelocity(deltaTime);
+            GPU::DispatchVerletVelocity(DeltaTime);
         }
 
         // check for adding new entities
@@ -96,10 +98,13 @@ void Simulation::RunMainThread() {
         // render scene
         UI::RenderScene();
 
+        // render GUI
+        UI::ImGuiRender();
+
         // frame!
         bgfx::frame();
 
-        
+
 
         // swap buffers
         if (RunSimulation) GPU::SwapBuffers();
@@ -144,6 +149,7 @@ void Simulation::RunMainThread() {
     bgfx::destroy(GPU::WritableSingleEntityTexture);
     // misc
     bgfx::destroy(GPU::VertexLayoutHandle);
+    imguiDestroy();
 
     bgfx::shutdown();
     SDL_Quit();
